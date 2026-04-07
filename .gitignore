@@ -6,6 +6,5 @@ __pycache__/
 dist/
 build/
 .eggs/
-uv.lock
 .DS_Store
 rctd_grpo_checkpoint/
