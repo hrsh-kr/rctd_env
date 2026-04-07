@@ -243,22 +243,39 @@ def random_policy(obs: RCTDObservation) -> RCTDAction:
 
 
 def heuristic_policy(obs: RCTDObservation) -> RCTDAction:
-    """Heuristic agent: reads evidence, weighs support vs contradiction, submits best.
+    """Smart heuristic agent: reads, verifies suspicious evidence, eliminates, submits.
 
     Strategy:
       1. Read all affordable evidence
-      2. Count apparent support AND subtract contradictions for each hypothesis
-      3. Discard least-supported hypotheses
-      4. Submit the most-supported hypothesis
+      2. Verify (run_experiment) any evidence with low confidence or contradictions
+      3. Consult expert when top-2 hypotheses are close
+      4. Discard least-supported hypotheses
+      5. Submit the most-supported hypothesis
     """
     read_ids = {e.evidence_id for e in obs.revealed_evidence}
+    verified_ids = {e.evidence_id for e in obs.revealed_evidence if e.verified}
     unread = [i for i in range(obs.total_evidence_count) if i not in read_ids]
 
-    # Phase 1: Read evidence while budget allows
-    if unread and obs.budget_remaining >= 2:  # Keep 1 for safety
+    # Phase 1: Read evidence (keep enough budget for 1 verify + 1 expert)
+    min_reserve = 5  # 3 for experiment + 2 for expert
+    if unread and obs.budget_remaining >= min_reserve + 1:
         return RCTDAction(type="read_evidence", evidence_id=unread[0])
 
-    # Phase 2: Count net support (support - contradiction)
+    # Phase 2: Verify suspicious evidence (low confidence or has contradictions)
+    if obs.budget_remaining >= 3:
+        suspicious = [
+            e for e in obs.revealed_evidence
+            if not e.verified and (
+                e.confidence < 0.65
+                or len(e.apparent_contradiction) > 0
+            )
+        ]
+        if suspicious:
+            # Verify the most suspicious item first
+            target = min(suspicious, key=lambda e: e.confidence)
+            return RCTDAction(type="run_experiment", evidence_id=target.evidence_id)
+
+    # Compute net support scores
     support_counts: Dict[int, float] = {h: 0.0 for h in obs.active_hypothesis_ids}
     for ev in obs.revealed_evidence:
         weight = 2.0 if ev.verified else 1.0
@@ -269,7 +286,6 @@ def heuristic_policy(obs: RCTDObservation) -> RCTDAction:
             if h in support_counts:
                 support_counts[h] -= weight * ev.confidence
 
-    # Factor in expert hints
     for hint in obs.expert_hints:
         if hint.hypothesis_id in support_counts:
             support_counts[hint.hypothesis_id] += hint.estimated_probability
@@ -278,12 +294,24 @@ def heuristic_policy(obs: RCTDObservation) -> RCTDAction:
         hid = obs.active_hypothesis_ids[0] if obs.active_hypothesis_ids else 0
         return RCTDAction(type="submit_answer", hypothesis_id=hid)
 
-    # Phase 3: Discard weakest if we have multiple hypotheses
+    # Phase 3: Consult expert when top-2 are close or when we haven't verified
+    sorted_hyps = sorted(support_counts.items(), key=lambda x: x[1], reverse=True)
+    consulted_ids = {h.hypothesis_id for h in obs.expert_hints}
+    if (
+        len(sorted_hyps) >= 2
+        and obs.budget_remaining >= 2
+        and sorted_hyps[0][1] - sorted_hyps[1][1] < 1.5
+        and sorted_hyps[0][0] not in consulted_ids
+    ):
+        return RCTDAction(type="consult_expert", hypothesis_id=sorted_hyps[0][0])
+
+    # Phase 4: Discard weakest
     if len(obs.active_hypothesis_ids) > 2:
         weakest = min(support_counts, key=support_counts.get)
         return RCTDAction(type="discard_hypothesis", hypothesis_id=weakest)
 
-    # Phase 4: Submit strongest
+    # Phase 5: Submit strongest
     strongest = max(support_counts, key=support_counts.get)
     return RCTDAction(type="submit_answer", hypothesis_id=strongest)
+
 

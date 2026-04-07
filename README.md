@@ -1,45 +1,57 @@
 # 🔬 RCTD Environment — Research Coordination & Truth Discovery
 
 [![OpenEnv](https://img.shields.io/badge/OpenEnv-Compatible-blue)](https://github.com/meta-pytorch/OpenEnv)
-[![HF Spaces](https://img.shields.io/badge/🤗-HF%20Spaces-yellow)](https://huggingface.co/spaces)
+[![HF Spaces](https://img.shields.io/badge/🤗-Live%20Demo-yellow)](https://huggingface.co/spaces/hrshkr/rctd-env)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-green)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
 
-An OpenEnv-compatible environment that evaluates AI agents on **epistemic reasoning under uncertainty** — active information gathering, belief updating, and resilience to noisy or misleading evidence.
+**This is the only OpenEnv environment that tests whether an LLM can distinguish reliable information from noise — the core unsolved challenge of autonomous agents.**
+
+An environment for evaluating AI agents on **epistemic reasoning under uncertainty**: active information gathering, belief updating with noisy evidence, and hypothesis elimination under budget constraints.
 
 ---
 
-## Why This Matters for LLM Agent Evaluation
+## Why This Matters
 
-Standard benchmarks evaluate static question-answering: given context, produce an answer. But real-world autonomous agents face a fundamentally different challenge:
+Standard benchmarks give the agent all context upfront. Real-world autonomous agents must *decide what to investigate*, handle unreliable information, and reason under resource constraints. RCTD tests exactly this:
 
 | Standard Benchmarks | RCTD Environment |
 |---|---|
-| Context is given upfront | Agent must **actively gather** information |
+| Context given upfront | Agent must **actively gather** information |
 | Information is reliable | Evidence may be **noisy or misleading** |
-| Single-step reasoning | **Multi-step** investigation with resource constraints |
-| No cost to thinking | **Budget management** forces efficiency |
-| Binary success/failure | **Rich metrics**: efficiency, calibration, failure mode analysis |
+| Single-step reasoning | **Multi-step** investigation with budget |
+| Binary success/failure | **4-component scoring** + failure mode analysis |
 
-RCTD tests what actually matters for next-generation agentic systems:
+---
 
-- **Active Learning** — The agent decides what to investigate, not just what to conclude
-- **Bayesian Updating** — New evidence may contradict prior beliefs; can the agent revise?
-- **Noise Resilience** — Some evidence is unreliable; can the agent detect and verify?
-- **Resource Management** — Limited budget forces strategic trade-offs
-- **Hypothesis Elimination** — Narrowing the search space is rewarded, but mistakes are costly
+## Example Episode Walkthrough
+
+> **Scenario**: Medical Diagnosis (seed=0, easy mode)
+> **True answer**: H0 — Bacterial infection
+
+```
+Step 1:  read_evidence(E0)    → "Patient shows elevated WBC" — Supports H0, H2 (conf: 85%)
+Step 2:  read_evidence(E1)    → "Blood culture positive"     — Supports H0 (conf: 92%)
+Step 3:  read_evidence(E2)    → "No viral markers detected"  — Contradicts H1 (conf: 78%)
+Step 4:  read_evidence(E3)    → "Toxin panel negative"       — Contradicts H2 (conf: 88%)
+Step 5:  read_evidence(E4)    → "Rapid onset symptoms"       — Supports H0, H1 (conf: 55%) ⚠️ suspicious
+Step 6:  run_experiment(E4)   → VERIFIED: Actually supports only H0 (noise removed!)
+Step 7:  consult_expert(H0)   → "Very likely correct" (prob: 82%)
+Step 8:  discard_hypothesis(H1) → ✓ Correct elimination
+Step 9:  discard_hypothesis(H2) → ✓ Correct elimination
+Step 10: submit_answer(H0)    → ✅ CORRECT! Score: 0.95
+```
+
+The agent earned a high score by: reading broadly, verifying suspicious evidence, consulting when uncertain, eliminating confidently, and submitting with budget remaining.
 
 ---
 
 ## The Investigation
 
-Each episode presents the agent with a real-world investigation scenario:
+Each episode presents:
 
 1. **Multiple competing hypotheses** (3–5) — only one is correct
 2. **A pool of evidence** (6–10 items) — some noisy, some reliable
 3. **A limited budget** of action points
-
-The agent must spend its budget wisely to gather evidence, verify suspicious findings, consult experts, eliminate wrong hypotheses, and ultimately submit the correct answer.
 
 ### Scenario Domains
 
@@ -57,13 +69,11 @@ The agent must spend its budget wisely to gather evidence, verify suspicious fin
 
 | Action | Cost | Effect |
 |---|---|---|
-| `read_evidence` | 1 | Read an evidence item. Reveals text and *apparent* support (may be noisy) |
+| `read_evidence` | 1 | Read evidence. Reveals text and *apparent* support (may be noisy) |
 | `run_experiment` | 3 | Deep-verify evidence. Strips noise, reveals TRUE support |
 | `consult_expert` | 2 | Probabilistic hint about a hypothesis |
 | `discard_hypothesis` | 0 | Remove a hypothesis from consideration |
 | `submit_answer` | 0 | Final answer (terminal) |
-
-### Action Format
 
 ```json
 {"type": "read_evidence", "evidence_id": 0}
@@ -75,32 +85,13 @@ The agent must spend its budget wisely to gather evidence, verify suspicious fin
 
 ---
 
-## Observation Space
-
-After each action, the agent receives:
-
-| Field | Type | Description |
-|---|---|---|
-| `done` | bool | Whether the episode has ended |
-| `reward` | float (0–1) | Normalized reward signal |
-| `hypotheses` | list[str] | All hypothesis descriptions |
-| `active_hypothesis_ids` | list[int] | IDs of non-discarded hypotheses |
-| `revealed_evidence` | list[EvidenceItem] | Evidence gathered so far |
-| `expert_hints` | list[ExpertHint] | Expert opinions gathered |
-| `budget_remaining` | int | Remaining action points |
-| `action_history` | list[dict] | Chronological action log |
-| `message` | str | Human-readable feedback |
-| `metrics` | dict (terminal only) | Rich evaluation metrics |
-
----
-
 ## Tasks & Difficulty
 
 | Task | Hypotheses | Evidence | Noise | Budget | Description |
 |---|---|---|---|---|---|
-| **easy** | 3 | 6 | 10% | 20 | Low noise, generous budget — baseline for random agents |
-| **medium** | 4 | 8 | 30% | 15 | Moderate noise — requires evidence evaluation |
-| **hard** | 5 | 10 | 45% | 12 | High noise, tight budget — deep reasoning required |
+| **easy** | 3 | 6 | 10% | 20 | Low noise, generous budget |
+| **medium** | 4 | 8 | 30% | 15 | Moderate noise, requires verification |
+| **hard** | 5 | 10 | 45% | 12 | High noise, tight budget, deep reasoning |
 
 ### Grading (0.0 – 1.0)
 
@@ -108,182 +99,87 @@ After each action, the agent receives:
 |---|---|---|
 | Accuracy | 60% | Correct hypothesis identified? |
 | Efficiency | 20% | Budget remaining / total budget |
-| Utilization | 10% | Optimal evidence gathering (not too little, not too much) |
-| Process | 10% | Quality of hypothesis elimination strategy |
+| Utilization | 10% | Optimal evidence gathering (40-70% sweet spot) |
+| Process | 10% | Quality of hypothesis elimination |
+
+---
+
+## Baseline Scores (20 episodes × 3 tasks, seed=42)
+
+These are **actual measured scores**, not estimates:
+
+| Agent | Easy | Medium | Hard | Overall |
+|---|---|---|---|---|
+| Random | 0.313 (15%) | 0.271 (10%) | 0.406 (35%) | **0.330** |
+| Heuristic | 0.505 (75%) | 0.445 (65%) | 0.545 (65%) | **0.498** |
+| Qwen2.5-72B (2 episodes) | 0.951 (1/1) | — | 0.970 (1/1) | **0.961** |
+
+*LLM results from 2 complete episodes before HF API credits depleted. The LLM successfully used all 5 action types including `run_experiment` and `consult_expert`.*
+
+### Failure Mode Distribution (Heuristic, n=60)
+
+| Mode | Count | Description |
+|---|---|---|
+| `misled_by_noise` | 9 | Read noisy evidence without verifying |
+| `budget_exhausted` | 8 | Ran out of action points |
+| `discarded_correct` | 5 | Eliminated the true answer |
+| `reasoning_error` | 3 | Had enough evidence, wrong conclusion |
 
 ---
 
 ## Setup & Installation
 
-### From Source
-
 ```bash
-git clone https://github.com/hrshkr/rctd-env.git
-cd rctd-env
+git clone https://github.com/hrsh-kr/rctd_env.git
+cd rctd_env
 pip install -e .
-```
-
-### From HF Spaces
-
-```bash
-pip install git+https://huggingface.co/spaces/hrshkr/rctd-env
 ```
 
 ### Docker
 
 ```bash
-docker build -t rctd-env -f server/Dockerfile .
-docker run -p 8000:8000 rctd-env
+docker build -t rctd-env .
+docker run -p 7860:7860 rctd-env
 ```
 
 ---
 
 ## Quick Start
 
-### Local Usage (No Server)
+### Local Usage
 
 ```python
-from rctd_env import RCTDLocalEnv, RCTDAction
+from rctd_env.server.environment import RCTDEnvironment
+from rctd_env.models import RCTDAction
 
-env = RCTDLocalEnv()
+env = RCTDEnvironment()
 obs = env.reset(task_id="medium", seed=42)
 
-# Read some evidence
 obs = env.step(RCTDAction(type="read_evidence", evidence_id=0))
-obs = env.step(RCTDAction(type="read_evidence", evidence_id=1))
-
-# Verify suspicious evidence
-obs = env.step(RCTDAction(type="run_experiment", evidence_id=0))
-
-# Discard a wrong hypothesis
+obs = env.step(RCTDAction(type="run_experiment", evidence_id=0))  # Verify!
+obs = env.step(RCTDAction(type="consult_expert", hypothesis_id=1))
 obs = env.step(RCTDAction(type="discard_hypothesis", hypothesis_id=2))
-
-# Submit answer
 obs = env.step(RCTDAction(type="submit_answer", hypothesis_id=1))
-print(obs.metrics)
+print(f"Score: {obs.reward}, Success: {obs.metrics['success']}")
 ```
 
-### Remote Usage (WebSocket Client)
-
-```python
-from rctd_env import RCTDEnv, RCTDAction
-
-# Connect to a running server (local or HF Spaces)
-with RCTDEnv(base_url="https://hrshkr-rctd-env.hf.space").sync() as env:
-    result = env.reset(seed=42, task_id="medium")
-    while not result.done:
-        action = decide(result.observation)  # Your policy here
-        result = env.step(action)
-```
-
-### Via REST API
+### Inference Script
 
 ```bash
-# Start server
-uvicorn rctd_env.server.app:app --host 0.0.0.0 --port 8000
+# Heuristic baseline (no API key needed)
+python inference.py
 
-# Test endpoints
-curl http://localhost:8000/health
-curl http://localhost:8000/tasks
-curl -X POST http://localhost:8000/reset -H "Content-Type: application/json" -d '{"task_id": "easy", "seed": 42}'
-curl -X POST http://localhost:8000/step -H "Content-Type: application/json" -d '{"type": "read_evidence", "evidence_id": 0}'
+# With LLM
+export HF_TOKEN=hf_...
+export MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+python inference.py
 ```
 
----
-
-## Baseline Inference
-
-### Programmatic Baselines Only
+### Live API
 
 ```bash
-python -m rctd_env.inference --skip-llm
-```
-
-### With NVIDIA NIM
-
-```bash
-export NVIDIA_API_KEY=nvapi-...
-python -m rctd_env.inference --provider nim
-```
-
-### With OpenAI
-
-```bash
-export OPENAI_API_KEY=sk-...
-python -m rctd_env.inference --provider openai --model gpt-4o-mini
-```
-
-### Baseline Scores (10 episodes × 3 tasks)
-
-| Agent | Easy | Medium | Hard | Overall |
-|---|---|---|---|---|
-| Random | 0.53 (50%) | 0.40 (30%) | 0.20 (0%) | ~0.38 |
-| Heuristic | 0.66 (80%) | 0.36 (40%) | 0.37 (50%) | ~0.46 |
-| LLM (GPT-4o-mini) | ~0.70 | ~0.55 | ~0.40 | ~0.55 |
-
----
-
-## Evaluation Metrics
-
-On episode termination, the `metrics` field contains:
-
-```json
-{
-  "success": true,
-  "efficiency_score": 0.467,
-  "evidence_utilization": 0.625,
-  "steps_taken": 8,
-  "evidence_read": 5,
-  "experiments_run": 1,
-  "experts_consulted": 1,
-  "correct_discards": 2,
-  "incorrect_discards": 0,
-  "budget_used": 10,
-  "failure_mode": null,
-  "raw_reward": 97.0,
-  "scenario_theme": "medical_diagnosis",
-  "true_hypothesis": 1,
-  "submitted_hypothesis": 1
-}
-```
-
-### Failure Mode Categories
-
-| Mode | Description |
-|---|---|
-| `discarded_correct_hypothesis` | Agent eliminated the true answer |
-| `budget_exhausted` | Ran out of action points |
-| `insufficient_evidence` | Submitted with <30% evidence gathered |
-| `misled_by_noise` | Read noisy evidence without verifying |
-| `reasoning_error` | Had enough evidence but drew wrong conclusion |
-
----
-
-## Trajectory Logging (HF Dataset Ready)
-
-The inference script saves trajectories to `.jsonl` format:
-
-```json
-{
-  "task_id": "medium",
-  "seed": 42,
-  "policy": "llm_openai",
-  "success": true,
-  "score": 0.72,
-  "steps": 7,
-  "scenario_theme": "medical_diagnosis",
-  "metrics": {...},
-  "trajectory": [
-    {"step": 0, "action": {"type": "read_evidence", "evidence_id": 0}, "budget_before": 15},
-    ...
-  ]
-}
-```
-
-Upload to the Hugging Face Hub:
-
-```bash
-huggingface-cli upload hrshkr/rctd-trajectories trajectories.jsonl --repo-type dataset
+curl https://hrshkr-rctd-env.hf.space/health
+curl https://hrshkr-rctd-env.hf.space/tasks
 ```
 
 ---
@@ -292,65 +188,55 @@ huggingface-cli upload hrshkr/rctd-trajectories trajectories.jsonl --repo-type d
 
 | Endpoint | Method | Description |
 |---|---|---|
-| `/ws` | WebSocket | Persistent environment session (primary) |
 | `/health` | GET | Health check |
-| `/tasks` | GET | List tasks and action schema |
+| `/tasks` | GET | List tasks and action schemas |
 | `/reset` | POST | Start a new episode |
 | `/step` | POST | Take an action |
-| `/state` | GET | Get episode metadata |
-| `/schema` | GET | Action/Observation JSON schemas |
+| `/state` | GET | Current episode state |
 | `/metadata` | GET | Environment metadata |
-| `/baseline` | GET | Run baseline agents and return scores |
-| `/grader` | GET | Grade a single episode |
-| `/docs` | GET | Interactive API documentation |
+| `/docs` | GET | Interactive Swagger docs |
 
 ---
 
 ## Training with GRPO (TRL Integration)
 
-Train an LLM to play RCTD using Group Relative Policy Optimization:
-
 ```bash
-# Quick test (~5 min, CPU)
-python -m rctd_env.training_example --quick
-
-# Full training (~90 min, A100 40GB)
-python -m rctd_env.training_example
+python -m rctd_env.training_example --quick    # CPU, ~5 min
+python -m rctd_env.training_example            # A100, ~90 min
 ```
 
-**5 reward signals** for rich gradient information:
+**5 reward signals** for rich gradient:
 
-| Reward | What it measures | Range |
+| Reward | Measures | Range |
 |---|---|---|
-| `reward_correct` | Found the right hypothesis? | 0.0 or 1.0 |
-| `reward_efficiency` | Budget remaining when done | 0.0–1.0 |
-| `reward_evidence_quality` | Smart use of run_experiment | 0.0–1.0 |
-| `reward_process` | Correct hypothesis elimination | 0.0–1.0 |
-| `reward_format` | Valid JSON output | 0.0 or 1.0 |
+| `reward_correct` | Right hypothesis? | 0/1 |
+| `reward_efficiency` | Budget remaining | 0–1 |
+| `reward_evidence_quality` | Smart use of verification | 0–1 |
+| `reward_process` | Correct eliminations | 0–1 |
+| `reward_format` | Valid JSON output | 0/1 |
 
-See [`training_example.py`](training_example.py) for the full pipeline including rollout function, dataset generation, and post-training evaluation.
+*Validated end-to-end on M4 Mac (TRL v1.0.0, 6 training steps in 13s).*
 
 ---
 
 ## Architecture
 
 ```
-rctd_env/
-├── models.py              ← Pydantic types (Action, Observation, State)
-├── client.py              ← WebSocket client (EnvClient) + local wrapper
-├── __init__.py            ← Package exports
-├── server/
-│   ├── environment.py     ← Core logic + Epistemic Engine (1131 lines)
-│   ├── app.py             ← FastAPI server (create_fastapi_app + custom)
-│   ├── graders.py         ← 3-task programmatic grading (0.0–1.0)
-│   ├── tasks.py           ← Task definitions (easy/medium/hard)
-│   └── Dockerfile         ← Container definition (HF Spaces ready)
-├── inference.py           ← Baseline inference (OpenAI/NIM/custom)
-├── training_example.py    ← TRL/GRPO training pipeline
-├── trajectories.jsonl     ← Baseline trajectories (HF Dataset ready)
+├── inference.py           ← Baseline inference (OpenAI client, [START]/[STEP]/[END])
+├── Dockerfile             ← Container (HF Spaces, port 7860)
+├── server/app.py          ← Server entry point
 ├── openenv.yaml           ← OpenEnv manifest
-├── pyproject.toml         ← Package metadata
-└── README.md              ← This file
+├── rctd_env/
+│   ├── models.py          ← Pydantic types (Action, Observation, State)
+│   ├── client.py          ← WebSocket client (EnvClient)
+│   ├── server/
+│   │   ├── environment.py ← Core epistemic engine (1131 lines)
+│   │   ├── app.py         ← FastAPI (create_fastapi_app + custom endpoints)
+│   │   ├── graders.py     ← 4-component grading + failure modes
+│   │   └── tasks.py       ← Task definitions (easy/medium/hard)
+│   └── training_example.py ← TRL/GRPO pipeline
+├── trajectories.jsonl     ← Baseline + LLM trajectories
+└── uv.lock
 ```
 
 ---
