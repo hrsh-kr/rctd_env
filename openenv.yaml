@@ -1,0 +1,10 @@
+name: rctd_env
+version: "1.0.0"
+description: "Research Coordination & Truth Discovery — Epistemic reasoning under uncertainty. Evaluates AI agents on active information gathering, belief updating, and resilience to noisy/misleading evidence."
+author: "hrshkr"
+tags:
+  - openenv
+  - epistemic-reasoning
+  - truth-discovery
+  - research-coordination
+  - llm-evaluation

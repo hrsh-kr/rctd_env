@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "rctd-env"
+version = "1.0.0"
+description = "Research Coordination & Truth Discovery — OpenEnv environment for epistemic reasoning evaluation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "openenv-core>=0.2.2",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "pydantic>=2.0.0",
+    "openai>=1.0.0",
+]
+
+[project.scripts]
+server = "rctd_env.server.app:main"
+
+[project.optional-dependencies]
+client = ["httpx>=0.25.0"]
+dev = ["pytest>=7.0", "httpx>=0.25.0", "websockets>=12.0"]
