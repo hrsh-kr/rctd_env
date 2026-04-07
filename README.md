@@ -1,3 +1,17 @@
+---
+title: RCTD Environment
+emoji: 🔬
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+license: mit
+tags:
+  - openenv
+  - epistemic-reasoning
+short_description: Epistemic reasoning under uncertainty
+---
+
 # 🔬 RCTD Environment — Research Coordination & Truth Discovery
 
 [![OpenEnv](https://img.shields.io/badge/OpenEnv-Compatible-blue)](https://github.com/meta-pytorch/OpenEnv)
