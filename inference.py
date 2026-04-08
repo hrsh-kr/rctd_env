@@ -4,9 +4,9 @@ RCTD Environment — Inference Script
 ===================================
 MANDATORY
 - Environment variables:
-    API_BASE_URL   The API endpoint for the LLM.
-    MODEL_NAME     The model identifier to use for inference.
-    HF_TOKEN       Your Hugging Face / API key.
+    OPENAI_API_KEY   Your OpenAI API key (primary). Also accepts HF_TOKEN as fallback.
+    API_BASE_URL     The API endpoint for the LLM (default: https://api.openai.com/v1).
+    MODEL_NAME       The model identifier to use for inference.
     LOCAL_IMAGE_NAME The name of the local image to use for the environment.
 
 STDOUT FORMAT
@@ -31,9 +31,10 @@ from rctd_env.server.graders import grade_all_tasks, heuristic_policy, random_po
 # Environment Variables (MANDATORY)
 # ═══════════════════════════════════════════════════════════════════════════
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
-MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-HF_TOKEN = os.getenv("HF_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
+HF_TOKEN = os.getenv("HF_TOKEN")  # Fallback API key
 LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 BENCHMARK = "rctd_env"
@@ -287,8 +288,8 @@ def run_episode(
 def main() -> None:
     env = RCTDEnvironment()
 
-    # Determine if we have an API key for LLM
-    api_key = HF_TOKEN or os.environ.get("OPENAI_API_KEY")
+    # Determine API key: OPENAI_API_KEY is primary (per spec), HF_TOKEN is fallback
+    api_key = OPENAI_API_KEY or HF_TOKEN
 
     if api_key:
         client = OpenAI(base_url=API_BASE_URL, api_key=api_key)
@@ -297,7 +298,7 @@ def main() -> None:
     else:
         client = None
         policy_name = "heuristic"
-        print("[DEBUG] No API key found, using heuristic baseline", file=sys.stderr, flush=True)
+        print("[DEBUG] No OPENAI_API_KEY found, using heuristic baseline", file=sys.stderr, flush=True)
 
     # Run all 3 tasks
     for task_id in ["easy", "medium", "hard"]:

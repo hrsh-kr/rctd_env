@@ -43,124 +43,197 @@ class ScenarioTemplate:
 
 
 SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
-    # ── 1. Medical Diagnosis ──────────────────────────────────────────────
+    # -- 1. Medical Diagnosis ------------------------------------------------
     ScenarioTemplate(
         theme="medical_diagnosis",
         domain="Medicine",
         hypothesis_pool=[
-            "The patient's condition is caused by a bacterial infection",
-            "The patient's condition is caused by a viral infection",
-            "The patient's condition is caused by an environmental toxin",
-            "The patient's condition is caused by an autoimmune disorder",
-            "The patient's condition is caused by a genetic mutation",
+            "The patient's condition is caused by a bacterial infection (Staphylococcus aureus bacteremia)",
+            "The patient's condition is caused by a viral infection (Epstein-Barr virus mononucleosis)",
+            "The patient's condition is caused by an environmental toxin (organophosphate poisoning)",
+            "The patient's condition is caused by an autoimmune disorder (systemic lupus erythematosus)",
+            "The patient's condition is caused by a genetic mutation (Factor V Leiden thrombophilia)",
         ],
         evidence_templates=[
-            {"text": "Broad-spectrum antibiotics show no clinical improvement after 72 hours", "supports": [1, 2, 3, 4], "contradicts": [0], "base_confidence": 0.8},
-            {"text": "Viral particles detected in patient blood sample via PCR", "supports": [1], "contradicts": [], "base_confidence": 0.6},
-            {"text": "Patient reports no known chemical or pollution exposure", "supports": [0, 1, 3, 4], "contradicts": [2], "base_confidence": 0.7},
-            {"text": "White blood cell count is significantly elevated", "supports": [0, 1, 3], "contradicts": [], "base_confidence": 0.5},
-            {"text": "Symptoms appeared suddenly after visiting a new geographic region", "supports": [0, 1, 2], "contradicts": [3, 4], "base_confidence": 0.6},
-            {"text": "Family history reveals no similar conditions in relatives", "supports": [0, 1, 2], "contradicts": [4], "base_confidence": 0.7},
-            {"text": "Anti-nuclear antibody test returns positive", "supports": [3], "contradicts": [0, 1, 2], "base_confidence": 0.75},
-            {"text": "Electron microscopy shows characteristic viral inclusion bodies", "supports": [1], "contradicts": [0, 2, 3, 4], "base_confidence": 0.85},
-            {"text": "Tissue biopsy reveals inflammatory infiltrate with eosinophils", "supports": [2, 3], "contradicts": [], "base_confidence": 0.65},
-            {"text": "Genetic sequencing reveals a known pathogenic variant", "supports": [4], "contradicts": [0, 1, 2], "base_confidence": 0.9},
+            {"text": "CBC with differential: WBC 18,200/uL (ref: 4,500-11,000), neutrophils 82%, bands 12% indicating left shift. Platelet count 142,000/uL (mild thrombocytopenia). ESR 68 mm/hr.", "supports": [0, 1, 3], "contradicts": [], "base_confidence": 0.7},
+            {"text": "Blood culture (2 of 2 sets): Gram-positive cocci in clusters growing at 14 hours. Preliminary identification pending MALDI-TOF confirmation. Sensitivity panel ordered.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.88},
+            {"text": "Procalcitonin level: 8.4 ng/mL (ref: <0.1 ng/mL). CRP 186 mg/L. Lactate 3.2 mmol/L. qSOFA score: 2 (altered mentation + RR 24).", "supports": [0], "contradicts": [4], "base_confidence": 0.82},
+            {"text": "Monospot test (heterophile antibody): Positive. Peripheral smear shows 38% atypical lymphocytes. EBV VCA IgM titer elevated at 1:320.", "supports": [1], "contradicts": [0, 2], "base_confidence": 0.75},
+            {"text": "Red blood cell cholinesterase level: 2,100 U/L (ref: 5,300-12,900 U/L), consistent with 60% enzyme inhibition. Serum cholinesterase similarly depressed at 1,800 U/L.", "supports": [2], "contradicts": [0, 1, 3, 4], "base_confidence": 0.85},
+            {"text": "Patient presents with SLUDGE syndrome: salivation, lacrimation, urination, defecation, GI distress, emesis. Pupils 2mm bilaterally (miosis). Fasciculations noted in deltoids.", "supports": [2], "contradicts": [1, 4], "base_confidence": 0.78},
+            {"text": "ANA titer: 1:640, homogeneous pattern. Anti-dsDNA antibodies: 240 IU/mL (ref: <30). Complement C3: 52 mg/dL (low), C4: 8 mg/dL (low). Urinalysis: proteinuria 2+, RBC casts.", "supports": [3], "contradicts": [0, 2], "base_confidence": 0.80},
+            {"text": "CT chest shows bilateral ground-glass opacities with subpleural sparing. No cavitation or lobar consolidation. Mediastinal lymphadenopathy present (largest node 2.1cm).", "supports": [1, 3], "contradicts": [], "base_confidence": 0.55},
+            {"text": "Genetic panel (thrombophilia workup): Factor V Leiden mutation detected (heterozygous, R506Q). Protein C activity normal at 118%. MTHFR C677T variant: heterozygous.", "supports": [4], "contradicts": [0, 1, 2], "base_confidence": 0.90},
+            {"text": "Blood smear peripheral morphology: Toxic granulation and Dohle bodies in neutrophils. No schistocytes or spherocytes. Reticulocyte count 1.8% (normal). Haptoglobin 145 mg/dL (normal), ruling out hemolytic process.", "supports": [0], "contradicts": [3, 4], "base_confidence": 0.72},
+            {"text": "Lumbar puncture results: CSF WBC 2 cells/uL (normal), protein 38 mg/dL (normal), glucose 62 mg/dL (normal). No organisms on Gram stain. CSF HSV PCR negative. Opening pressure 14 cmH2O.", "supports": [0, 3], "contradicts": [1], "base_confidence": 0.60},
+            {"text": "Urine toxicology screen (GC-MS): Positive for organophosphate metabolites (diethylphosphate 142 ug/L, diethylthiophosphate 89 ug/L). Serum atropine challenge test: marked improvement in secretions within 5 minutes of 2mg IV atropine.", "supports": [2], "contradicts": [0, 1, 3, 4], "base_confidence": 0.87},
+            {"text": "Echocardiogram (TTE): No vegetations on valves (Duke criteria not met). LVEF 58% (normal). No pericardial effusion. Aortic and mitral valves morphologically normal. Rules out infective endocarditis as source of bacteremia.", "supports": [1, 3], "contradicts": [0], "base_confidence": 0.58},
+            {"text": "Skin biopsy (punch, 4mm, malar area): Interface dermatitis with vacuolar changes at DEJ. Mucin deposition in dermis. Direct immunofluorescence: granular IgG and C3 deposits at basement membrane zone (lupus band positive).", "supports": [3], "contradicts": [0, 1, 2, 4], "base_confidence": 0.86},
+            {"text": "Patient history: 34F, no chemical exposure, no travel, no family history of clotting disorders. Symptoms: 5-day fever (39.2C), fatigue, malar rash, arthralgia in MCP joints bilaterally.", "supports": [1, 3], "contradicts": [2, 4], "base_confidence": 0.65},
         ],
     ),
-    # ── 2. Market Disruption Analysis ─────────────────────────────────────
+    # -- 2. Market Disruption Analysis ---------------------------------------
     ScenarioTemplate(
         theme="market_analysis",
         domain="Finance",
         hypothesis_pool=[
-            "The market disruption is driven by a supply-chain shock",
-            "The market disruption is driven by a demand-side shift in consumer behavior",
-            "The market disruption is driven by new regulatory policy",
-            "The market disruption is driven by a competitor's technological breakthrough",
-            "The market disruption is driven by macroeconomic currency fluctuations",
+            "The market disruption is driven by a supply-chain shock (Suez Canal blockage + Red Sea rerouting)",
+            "The market disruption is driven by a demand-side shift (post-pandemic remote work reducing commercial real estate)",
+            "The market disruption is driven by new regulatory policy (EU AI Act compliance costs)",
+            "The market disruption is driven by a competitor's technological breakthrough (quantum computing milestone)",
+            "The market disruption is driven by macroeconomic currency fluctuations (USD/CNY intervention)",
         ],
         evidence_templates=[
-            {"text": "Major shipping routes report 40% capacity reduction this quarter", "supports": [0], "contradicts": [1], "base_confidence": 0.8},
-            {"text": "Consumer sentiment surveys show dramatically changed preferences", "supports": [1], "contradicts": [], "base_confidence": 0.6},
-            {"text": "Government announced new tariffs on key raw materials last month", "supports": [0, 2], "contradicts": [], "base_confidence": 0.75},
-            {"text": "Competitor filed 12 patents in the last 60 days in this domain", "supports": [3], "contradicts": [], "base_confidence": 0.7},
-            {"text": "Exchange rate volatility has tripled compared to historical average", "supports": [4], "contradicts": [], "base_confidence": 0.65},
-            {"text": "Warehouse inventories are at record highs, not lows", "supports": [1, 2, 3, 4], "contradicts": [0], "base_confidence": 0.8},
-            {"text": "Social media trend analysis shows viral adoption of alternative products", "supports": [1, 3], "contradicts": [], "base_confidence": 0.5},
-            {"text": "Central bank issued emergency interest rate guidance", "supports": [4], "contradicts": [1, 3], "base_confidence": 0.7},
-            {"text": "Industry insiders report regulatory review is imminent", "supports": [2], "contradicts": [], "base_confidence": 0.55},
-            {"text": "Competitor's stock price surged 30% on undisclosed news", "supports": [3], "contradicts": [0, 2, 4], "base_confidence": 0.6},
+            {"text": "Baltic Dry Index surged 47% in 3 weeks (from 1,240 to 1,824). Drewry World Container Index shows 40-foot container rates Shanghai-Rotterdam at $4,890 (up from $1,420 baseline). Maersk issued force majeure on 12 routes.", "supports": [0], "contradicts": [1], "base_confidence": 0.82},
+            {"text": "Kastle Systems back-to-work barometer: US office occupancy at 47.3% (pre-pandemic: 95%). WeWork filed Chapter 11. Cushman and Wakefield reports 950M sq ft of vacant US office space (18.2% vacancy, highest since 1991).", "supports": [1], "contradicts": [], "base_confidence": 0.75},
+            {"text": "European Commission published final EU AI Act implementing rules. Compliance deadline: Aug 2025 for prohibited systems. Estimated industry compliance cost: 31B EUR across EU tech sector. GDPR-style extraterritorial scope confirmed.", "supports": [2], "contradicts": [], "base_confidence": 0.70},
+            {"text": "IBM announced 1,121-qubit Condor processor achieving quantum volume 2^18. Google DeepMind published fault-tolerant error correction below threshold. D-Wave stock +340% in 60 days. McKinsey estimates $1.3T quantum market by 2035.", "supports": [3], "contradicts": [], "base_confidence": 0.68},
+            {"text": "PBOC set USD/CNY midpoint at 7.1088, strongest fix in 4 months. FX reserves drew down $26.8B. Offshore CNH implied vol spiked to 8.2%. Carry trade unwind in AUD/JPY triggered margin calls across Asian desks.", "supports": [4], "contradicts": [1, 3], "base_confidence": 0.73},
+            {"text": "Port of Rotterdam throughput data: TEU volume down 28% YoY. Average vessel waiting time increased from 1.2 to 6.8 days. Insurance premiums for Red Sea transit up 400%. Alternative Cape of Good Hope routing adds 10-14 days.", "supports": [0], "contradicts": [1, 2, 3, 4], "base_confidence": 0.80},
+            {"text": "Bloomberg terminal data: Sector rotation analysis shows Tech (-8.2%), Real Estate (-12.4%), Industrials (+3.1%), Utilities (+5.7%). VIX at 28.4 (elevated). Put/call ratio on SPY at 1.34.", "supports": [1, 2, 3], "contradicts": [], "base_confidence": 0.50},
+            {"text": "Federal Reserve Beige Book: 8 of 12 districts report slight to modest growth deceleration. Labor market cooling: JOLTS openings down to 8.1M from 10.7M peak. Core PCE sticky at 3.2%.", "supports": [4], "contradicts": [3], "base_confidence": 0.60},
+            {"text": "Reuters survey of 40 industry analysts: 62% cite regulatory uncertainty as primary headwind. STOXX Europe 600 Tech sub-index underperforming broader index by 340bps since Act announcement.", "supports": [2], "contradicts": [0], "base_confidence": 0.65},
+            {"text": "Shipping satellite AIS data (MarineTraffic): 47 container vessels currently holding at Bab el-Mandab strait anchorage. Average wait time 8.4 days (normal: <1 day). CMA CGM and Hapag-Lloyd have rerouted 100% of Asia-Europe services via Cape of Good Hope since Jan 15.", "supports": [0], "contradicts": [1, 3, 4], "base_confidence": 0.83},
+            {"text": "Commercial real estate REIT earnings (Q3): Boston Properties FFO down 14% YoY. Vornado Realty announced conversion of 3 office towers to residential. National office lease renewal rate: 61% (pre-pandemic: 82%). Sublease availability at 10-year high.", "supports": [1], "contradicts": [0], "base_confidence": 0.77},
+            {"text": "SEC 8-K filing analysis: 23 EU-headquartered tech companies disclosed material AI Act compliance costs in recent filings. Average estimated spend: $45M for large-cap, $8M for mid-cap. Three companies announced relocation of AI research divisions to non-EU jurisdictions.", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.72},
+            {"text": "Semiconductor supply chain data (SEMI): Global wafer shipments up 12% QoQ. TSMC utilization rate at 94%. No reported shortages in consumer electronics or automotive chips. Lead times for standard components returned to pre-pandemic levels of 12-14 weeks.", "supports": [1, 2, 3, 4], "contradicts": [0], "base_confidence": 0.68},
+            {"text": "Consumer confidence index (Conference Board): Present Situation Index fell to 134.5 (from 147.2). Expectations Index at 72.8 (recession signal <80). Labor differential (jobs plentiful minus hard to get) narrowed to 12.7 points, lowest since 2021.", "supports": [1, 4], "contradicts": [3], "base_confidence": 0.63},
+            {"text": "Patent filing data (WIPO): Quantum computing filings up 89% YoY. Top filer shifted from IBM to undisclosed Chinese entity. VC funding in quantum startups: $2.3B in Q3 (vs $800M same quarter prior year).", "supports": [3], "contradicts": [0, 2, 4], "base_confidence": 0.62},
         ],
     ),
-    # ── 3. Cybersecurity Incident ─────────────────────────────────────────
+    # -- 3. Cybersecurity Incident -------------------------------------------
     ScenarioTemplate(
         theme="security_incident",
         domain="Cybersecurity",
         hypothesis_pool=[
-            "The breach was caused by an insider threat (malicious employee)",
-            "The breach was caused by an external APT (advanced persistent threat)",
-            "The breach was caused by a software vulnerability (zero-day exploit)",
-            "The breach was caused by a social engineering / phishing attack",
-            "The breach was caused by a misconfigured cloud infrastructure",
+            "The breach was caused by an insider threat (malicious employee with privileged access)",
+            "The breach was caused by an external APT group (MITRE: APT29/Cozy Bear, Russian SVR)",
+            "The breach was caused by a zero-day exploit (CVE-2024-3094: XZ Utils backdoor variant)",
+            "The breach was caused by a social engineering / spearphishing campaign",
+            "The breach was caused by misconfigured cloud infrastructure (AWS S3 + IAM policy)",
         ],
         evidence_templates=[
-            {"text": "Access logs show login from an employee's credentials at 3 AM local time", "supports": [0, 3], "contradicts": [], "base_confidence": 0.6},
-            {"text": "Network traffic analysis reveals C2 beacon patterns to known APT infrastructure", "supports": [1], "contradicts": [0, 4], "base_confidence": 0.75},
-            {"text": "Affected systems are all running an unpatched version of the framework", "supports": [2], "contradicts": [], "base_confidence": 0.7},
-            {"text": "Multiple employees received targeted spearphishing emails last week", "supports": [3], "contradicts": [], "base_confidence": 0.65},
-            {"text": "Cloud storage bucket was publicly accessible for 6 months per audit", "supports": [4], "contradicts": [1, 2], "base_confidence": 0.85},
-            {"text": "Exfiltrated data includes files only accessible to senior engineers", "supports": [0], "contradicts": [4], "base_confidence": 0.7},
-            {"text": "Malware sample matches signatures from a known nation-state group", "supports": [1], "contradicts": [0, 3, 4], "base_confidence": 0.6},
-            {"text": "The exploit payload targets a CVE published 48 hours ago", "supports": [2], "contradicts": [0, 3], "base_confidence": 0.8},
-            {"text": "An employee recently gave notice and was denied a promotion", "supports": [0], "contradicts": [1, 2], "base_confidence": 0.5},
-            {"text": "Multi-factor authentication bypass was used in the initial access", "supports": [1, 2, 3], "contradicts": [4], "base_confidence": 0.65},
+            {"text": "SIEM alert: Anomalous data exfiltration -- 2.4TB transferred to external IP 185.220.101.x (Tor exit node) between 02:00-04:00 UTC via DNS tunneling (TXT record queries at 847/min to randomized subdomains of legit-update[.]com).", "supports": [0, 1], "contradicts": [4], "base_confidence": 0.72},
+            {"text": "CrowdStrike Falcon EDR: Process injection detected -- explorer.exe spawned rundll32.exe loading unsigned DLL from %APPDATA%. Behavioral signature matches MITRE ATT&CK T1055.001 (Process Hollowing). Cobalt Strike beacon config extracted: watermark 0x5109bf4d.", "supports": [1], "contradicts": [0, 4], "base_confidence": 0.80},
+            {"text": "Vulnerability scan results: 14 internet-facing hosts running XZ Utils 5.6.0/5.6.1 (affected versions). OpenSSH with systemd integration confirmed on 9 hosts. Liblzma backdoor allows pre-auth RCE via crafted SSH certificates. CVSS 10.0.", "supports": [2], "contradicts": [0, 3], "base_confidence": 0.85},
+            {"text": "Email gateway logs: 23 employees in Finance/Engineering received emails from spoofed DocuSign sender (envelope-from: noreply@docusign-verify[.]net). 7 clicked through. Credential harvesting page hosted on Cloudflare Workers. OAuth tokens for 4 Microsoft 365 accounts compromised.", "supports": [3], "contradicts": [], "base_confidence": 0.70},
+            {"text": "AWS CloudTrail: S3 bucket prod-customer-data-2024 had BlockPublicAccess disabled on 2024-01-15 by IAM role deploy-automation. ListBucket and GetObject calls from 94 unique IPs across 12 countries in subsequent 72 hours. No bucket policy restricting access.", "supports": [4], "contradicts": [1, 2], "base_confidence": 0.88},
+            {"text": "HR records cross-reference: Employee J.M. (Senior DevOps, termination date: 2024-02-01) retained VPN access for 18 days post-termination. Badge access logs show after-hours entry to server room on 3 dates. GitHub audit log: 4 repos cloned to personal device on final day.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.75},
+            {"text": "Threat intel correlation (VirusTotal + MISP): Malware sample SHA256:a3b5... matches YARA rule APT29_WellMess_Loader. Infrastructure overlap with 2020 SolarWinds campaign (shared SSL certificate CN). TTPs consistent with SVR targeting pattern.", "supports": [1], "contradicts": [0, 3, 4], "base_confidence": 0.78},
+            {"text": "Forensic disk image analysis: Timeline shows initial compromise at 2024-01-22T03:41Z. Auth.log: successful SSH login using ed25519 key not in authorized_keys (backdoor injection). Process tree: sshd spawned unsigned .libsystemd.so (92KB) then reverse shell.", "supports": [2], "contradicts": [3, 4], "base_confidence": 0.83},
+            {"text": "DLP alert review: 340 files matching PII regex (SSN, credit card) were accessed by service account svc-reporting which normally queries only aggregated tables. Access originated from J.M. last-known workstation IP. No MFA prompt triggered (service accounts exempt).", "supports": [0], "contradicts": [1, 2], "base_confidence": 0.68},
+            {"text": "Active Directory audit log: Service account svc-backup had its password reset by J.M.'s admin credentials 72 hours before termination. Same service account was used for lateral movement to 3 database servers containing customer PII. No helpdesk ticket corresponds to this password reset.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.82},
+            {"text": "Mandiant threat intelligence report: APT29 shifted to cloud-focused operations in 2024. New tactic: abuse of trusted cloud services (Azure, AWS) for C2. No direct evidence of on-premise intrusion in this campaign. Targeting profile: government contractors and think tanks.", "supports": [1], "contradicts": [0, 4], "base_confidence": 0.70},
+            {"text": "Patch management audit (Qualys): 67% of external-facing systems had critical patches applied within SLA. XZ Utils specifically was patched on 14 of 14 affected hosts within 48 hours of CVE publication. However, backdoor may have been active for up to 3 weeks before CVE disclosure.", "supports": [2], "contradicts": [], "base_confidence": 0.65},
+            {"text": "Microsoft 365 audit log: Compromised OAuth tokens were used to create 3 new mail flow rules forwarding all C-suite email to external address. Rules created at 14:22 UTC using legitimate user session from residential ISP IP. Geo-impossible travel detected: London (14:00) -> Lagos (14:22).", "supports": [3], "contradicts": [0, 2], "base_confidence": 0.76},
+            {"text": "AWS Config timeline: IAM policy arn:aws:iam::123456789:policy/S3FullAccess was attached to 8 additional roles between Jan 10-15. Change was made via Terraform by the deploy-automation role. No code review or approval in GitHub for corresponding IaC changes.", "supports": [4], "contradicts": [1, 2], "base_confidence": 0.79},
+            {"text": "Network forensics: TLS certificate analysis on C2 channel shows Lets Encrypt cert issued 48hrs before breach. JA3 fingerprint matches known Cobalt Strike 4.9 profile. Beacon interval: 60s with 15% jitter. Metadata exfil via DNS over HTTPS to Cloudflare resolver.", "supports": [1, 2, 3], "contradicts": [4], "base_confidence": 0.65},
         ],
     ),
-    # ── 4. Climate Event Attribution ──────────────────────────────────────
+    # -- 4. Climate Event Attribution ----------------------------------------
     ScenarioTemplate(
         theme="climate_attribution",
         domain="Environmental Science",
         hypothesis_pool=[
-            "The extreme weather event is primarily driven by natural oceanic cycles (e.g. El Niño)",
-            "The extreme weather event is primarily driven by anthropogenic greenhouse gas emissions",
-            "The extreme weather event is primarily driven by volcanic aerosol forcing",
-            "The extreme weather event is primarily driven by urban heat island effects",
-            "The extreme weather event is primarily driven by deforestation-induced albedo changes",
+            "The extreme weather event is primarily driven by natural oceanic cycles (strong El Nino, ONI +2.1C)",
+            "The extreme weather event is primarily driven by anthropogenic greenhouse gas emissions (CO2 at 425.4 ppm)",
+            "The extreme weather event is primarily driven by volcanic aerosol forcing (Hunga Tonga water vapor injection)",
+            "The extreme weather event is primarily driven by urban heat island effects (megacity microclimate)",
+            "The extreme weather event is primarily driven by regional deforestation (Amazon/Southeast Asia land-use change)",
         ],
         evidence_templates=[
-            {"text": "Sea surface temperature anomalies match El Niño signature patterns", "supports": [0], "contradicts": [2, 3], "base_confidence": 0.7},
-            {"text": "Global CO₂ concentration has reached a new record of 425 ppm", "supports": [1], "contradicts": [], "base_confidence": 0.9},
-            {"text": "Satellite data shows a stratospheric aerosol increase from a recent eruption", "supports": [2], "contradicts": [0], "base_confidence": 0.75},
-            {"text": "Temperature anomaly is localized to metropolitan areas only", "supports": [3], "contradicts": [0, 1, 2], "base_confidence": 0.65},
-            {"text": "Regional deforestation rate has increased 200% in 5 years", "supports": [4], "contradicts": [], "base_confidence": 0.6},
-            {"text": "Historical records show similar events occurred during past El Niño cycles", "supports": [0], "contradicts": [1, 3, 4], "base_confidence": 0.7},
-            {"text": "Climate model projections under RCP 8.5 predicted this event magnitude", "supports": [1], "contradicts": [0], "base_confidence": 0.8},
-            {"text": "Rural stations 50km away show identical temperature spikes", "supports": [0, 1, 2, 4], "contradicts": [3], "base_confidence": 0.75},
-            {"text": "Aerosol optical depth measurements show volcanic plume overhead", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.8},
-            {"text": "Land-use satellite comparison shows dramatic vegetation cover loss", "supports": [4], "contradicts": [3], "base_confidence": 0.7},
+            {"text": "NOAA Oceanic Nino Index (ONI): +2.1C for DJF 2023-24, qualifying as very strong El Nino. Subsurface Kelvin wave analysis shows warm pool extending to 150W. Trade wind anomaly: -4.2 m/s. Historical analog years (1997-98, 2015-16) show similar teleconnection patterns.", "supports": [0], "contradicts": [3], "base_confidence": 0.78},
+            {"text": "Mauna Loa Observatory CO2: 425.4 ppm (May 2024), annual increase +3.4 ppm (highest recorded rate). Methane at 1,923 ppb (+14 ppb YoY). Global mean surface temperature anomaly: +1.48C above 1850-1900 baseline (ERA5 reanalysis).", "supports": [1], "contradicts": [], "base_confidence": 0.85},
+            {"text": "NASA SAGE III/ISS stratospheric aerosol data: Aerosol optical depth (AOD) at 0.010 above baseline at 525nm in Southern Hemisphere. Hunga Tonga-Hunga Haapai injected estimated 146 Tg of water vapor into the stratosphere (January 2022). Residence time models suggest perturbation persists through 2025.", "supports": [2], "contradicts": [0], "base_confidence": 0.72},
+            {"text": "Urban weather station network (EPA AirNow + local ASOS): City center station reads 4.8C above rural reference station 35km NW. Landsat 9 thermal band shows surface temperature differential of 6.2C between CBD impervious surfaces and surrounding agricultural land. Effect is nocturnal-dominant.", "supports": [3], "contradicts": [0, 1, 2], "base_confidence": 0.65},
+            {"text": "Global Forest Watch / PRODES data: Amazon deforestation rate 11,568 km2 in 2023 (up 22% from 2019 baseline). Southeast Asia palm oil expansion: 2.4M hectares converted 2020-2024. Albedo change from forest to pasture estimated at +0.03 (shortwave), reducing evapotranspiration by 40%.", "supports": [4], "contradicts": [], "base_confidence": 0.68},
+            {"text": "ECMWF ERA5 reanalysis: SST anomaly pattern shows canonical El Nino spatial signature in Nino 3.4 region. 200hPa velocity potential anomalies consistent with enhanced Walker circulation weakening. MJO phase analysis shows suppressed convection over Maritime Continent.", "supports": [0], "contradicts": [1, 3, 4], "base_confidence": 0.75},
+            {"text": "IPCC AR6 attribution framework applied: Probability of this event magnitude under pre-industrial conditions <0.3%. Under current forcing: approximately 4% annually. Fraction of Attributable Risk (FAR) = 0.93 for anthropogenic warming. Multi-model ensemble (CMIP6) agreement: 38 of 42 models reproduce the event under SSP2-4.5.", "supports": [1], "contradicts": [0], "base_confidence": 0.82},
+            {"text": "Radiosonde network (IGRA): Temperature profile shows stratospheric cooling (-0.8C at 50hPa) concurrent with tropospheric warming (+1.2C at 500hPa). This vertical signature is fingerprint of greenhouse gas forcing, not solar or volcanic (which warm the stratosphere).", "supports": [1], "contradicts": [2, 3], "base_confidence": 0.80},
+            {"text": "CALIPSO lidar backscatter profiles: Enhanced aerosol layer detected at 28-32km altitude, consistent with Hunga Tonga volcanic plume trajectory modeling. Particle size distribution peaks at 0.5um. No comparable stratospheric perturbation since Pinatubo (1991).", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.77},
+            {"text": "Ocean buoy network (TAO/TRITON array): Subsurface temperature at 150m depth along equatorial Pacific shows +4.2C anomaly. Warm water volume (>20C isotherm) expanded to 135% of climatological mean. Thermocline depth anomaly: +28m. Pattern is textbook El Nino Modoki (central Pacific type).", "supports": [0], "contradicts": [3, 4], "base_confidence": 0.80},
+            {"text": "Ice core proxy data (Vostok, EPICA): Current CO2 level (425 ppm) exceeds any value in the 800,000-year record. Rate of increase (3.4 ppm/yr) is 10x faster than the fastest natural increase during deglaciation events. Methane similarly unprecedented at 1,923 ppb.", "supports": [1], "contradicts": [], "base_confidence": 0.88},
+            {"text": "SO2 monitoring (Aura/OMI satellite): No significant SO2 plumes detected in the past 6 months. Stratospheric SO2 column density at background levels (0.1 DU). No volcanic eruptions with VEI >= 4 since Hunga Tonga. Rules out fresh volcanic aerosol injection.", "supports": [0, 1, 4], "contradicts": [2], "base_confidence": 0.73},
+            {"text": "Microclimate sensor network (urban/rural paired stations): Temperature differential exhibits strong diurnal cycle -- UHI effect peaks at 01:00-04:00 local (delta: +5.8C) and minimizes at 14:00 (delta: +1.2C). Weekend vs weekday difference: 0.4C (anthropogenic heat flux signature).", "supports": [3], "contradicts": [], "base_confidence": 0.62},
+            {"text": "GRACE-FO satellite gravimetry: Terrestrial water storage in Amazon basin decreased by 34 km3/year over 2020-2024 period. Evapotranspiration reduction detected via MODIS ET product. Regional precipitation recycling ratio dropped from 0.35 to 0.28 (moisture recycling breakdown).", "supports": [4], "contradicts": [3], "base_confidence": 0.74},
+            {"text": "Flux tower network (FLUXNET): Latent heat flux at deforested Amazon sites reduced by 42% compared to paired intact forest references. Sensible heat flux increased proportionally. Regional moisture recycling model shows 18% reduction in recycled precipitation for downwind regions.", "supports": [4], "contradicts": [3], "base_confidence": 0.70},
         ],
     ),
-    # ── 5. Historical Artifact Authentication ─────────────────────────────
+    # -- 5. Historical Artifact Authentication -------------------------------
     ScenarioTemplate(
         theme="artifact_authentication",
         domain="Archaeology",
         hypothesis_pool=[
-            "The artifact is an authentic item from the claimed historical period",
-            "The artifact is a modern forgery created with period-appropriate materials",
-            "The artifact is genuine but misdated (from a different era than claimed)",
-            "The artifact is a contemporary replica made for educational purposes",
-            "The artifact is a composite of authentic fragments and modern restoration",
+            "The artifact is an authentic piece from the claimed 4th century BCE Hellenistic period",
+            "The artifact is a modern forgery (post-1950) created with period-appropriate materials",
+            "The artifact is genuine antiquity but misdated -- actually from the 2nd century CE Roman period",
+            "The artifact is a 19th-century museum replica made for educational display",
+            "The artifact is a composite: authentic ancient fragments with modern restoration/assembly",
         ],
         evidence_templates=[
-            {"text": "Radiocarbon dating places the material within the claimed period ±50 years", "supports": [0], "contradicts": [1, 3], "base_confidence": 0.8},
-            {"text": "Microscopic analysis reveals tool marks consistent with modern machinery", "supports": [1, 3], "contradicts": [0], "base_confidence": 0.7},
-            {"text": "The artistic style is inconsistent with the claimed period's conventions", "supports": [1, 2, 3], "contradicts": [0], "base_confidence": 0.6},
-            {"text": "Chemical composition of pigments matches known historical sources", "supports": [0, 2, 4], "contradicts": [1, 3], "base_confidence": 0.75},
-            {"text": "Provenance records show a gap of 200 years with no documentation", "supports": [1, 2, 3], "contradicts": [], "base_confidence": 0.55},
-            {"text": "Thermoluminescence dating gives a date 300 years after the claimed period", "supports": [2], "contradicts": [0, 1, 3], "base_confidence": 0.85},
-            {"text": "X-ray fluorescence reveals two distinct layers of material composition", "supports": [4], "contradicts": [0, 1, 3], "base_confidence": 0.8},
-            {"text": "Similar artifacts from verified excavations share identical iconography", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.7},
-            {"text": "A museum catalog from 1920 lists an item with matching description", "supports": [0, 2], "contradicts": [3], "base_confidence": 0.65},
-            {"text": "UV fluorescence shows modern adhesive at several joint points", "supports": [4], "contradicts": [0], "base_confidence": 0.75},
+            {"text": "Radiocarbon dating (AMS, Beta Analytic Lab): Organic residue in surface patina yields 2,340 +/- 40 BP (calibrated 2-sigma range: 520-380 BCE). delta-13C = -24.3 per mil, consistent with C3 plant-derived binding medium. Sample weight: 12.4mg.", "supports": [0], "contradicts": [1, 3], "base_confidence": 0.82},
+            {"text": "Scanning electron microscopy (SEM-EDS): Tool marks on base show parallel striations at 0.8mm spacing with irregular depth -- consistent with hand-worked bronze chisel. No evidence of rotary tool marks (which would indicate post-1800 manufacture). Surface crystallization: cuprite penetration to 180um depth.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.76},
+            {"text": "X-ray fluorescence (XRF) compositional analysis: Cu 88.2%, Sn 9.8%, Pb 1.4%, As 0.3%, Fe 0.2%, trace Ag/Sb. The arsenic-tin bronze composition is consistent with Eastern Mediterranean production c. 400-100 BCE. Lead isotope ratios (206/204: 18.72, 207/204: 15.66) match Laurion mines (Attica).", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.78},
+            {"text": "Thermoluminescence (TL) dating of clay core fragments: Last firing event dated to 1,890 +/- 120 years before present. This places manufacture in the 1st-2nd century CE range -- approximately 400 years later than the claimed Hellenistic date.", "supports": [2], "contradicts": [0, 1, 3], "base_confidence": 0.84},
+            {"text": "Provenance research: Object appears in the 1897 Baron Rothschild collection catalog (item #447, described as Hellenistic bronze, provenance unknown). No documentation between supposed antiquity and 1897. Geneva Freeport storage records: 1962-2019. No export license from country of origin.", "supports": [0, 2, 3], "contradicts": [], "base_confidence": 0.55},
+            {"text": "UV fluorescence examination: Modern synthetic adhesive (cyanoacrylate signature) detected at 3 join points. Surrounding patina is disrupted at joins -- sharp boundary between weathered and unweathered surfaces. Two fragments show different patina coloration (olive-green vs. blue-green).", "supports": [4], "contradicts": [0, 1, 3], "base_confidence": 0.80},
+            {"text": "Micro-CT scan (160kV, 12um resolution): Internal structure shows 2 distinct casting events -- left arm and torso have different internal porosity patterns and wall thicknesses (2.1mm vs 3.4mm). Core material: 2 different clay types visible in density mapping.", "supports": [4], "contradicts": [0, 1, 3], "base_confidence": 0.82},
+            {"text": "Iconographic analysis (Dr. M. Korres, Athens): Hairstyle matches melon coiffure type common 340-300 BCE. Drapery folds use motion lines technique from Lysippan school. However, proportional system (7.5 head-heights) is characteristic of Roman copies of Greek originals.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.60},
+            {"text": "Corrosion product analysis (XRD): Primary patina layer is malachite over cuprite -- consistent with centuries of burial in calcareous soil. However, atacamite detected only on left arm fragment, suggesting different burial environment or post-excavation treatment.", "supports": [4], "contradicts": [1], "base_confidence": 0.72},
+            {"text": "Metallographic cross-section (optical microscopy, 200x): Alpha-phase bronze with equiaxed grain structure (avg grain size 45um) and annealing twins -- consistent with repeated hot-working and annealing cycles used in ancient lost-wax casting. No cold-rolled microstructure.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.74},
+            {"text": "Accelerator mass spectrometry (AMS) of core clay organic inclusions: Radiocarbon age 1,950 +/- 55 BP (calibrated: 20-130 CE). This is statistically inconsistent with the claimed 4th century BCE date at >99% confidence. Consistent with Roman Imperial period production.", "supports": [2], "contradicts": [0, 1, 3], "base_confidence": 0.86},
+            {"text": "Portable X-ray diffraction (p-XRD) of blue pigment on surface: Egyptian Blue (CaCuSi2O6) identified. This pigment was used extensively from 3rd millennium BCE through 4th century CE. Its presence is consistent with both Hellenistic and Roman dates but rules out 19th century manufacture.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.68},
+            {"text": "Inscription analysis (Dr. A. Matthaiou, epigraphist): Letter forms show sigma with 4 bars (archaic) but omega with modern proportions (post-3rd century BCE). Mixed chronological indicators suggest either transitional period (late 4th century) or deliberate archaizing in Roman era.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.58},
+            {"text": "3D surface scanning (structured light, 50um accuracy): Left arm attachment surface shows fresh fracture faces without patination, surrounded by artificial patina (copper chloride solution application detected by FTIR). Attachment method uses modern stainless steel dowel pins (316L grade).", "supports": [4], "contradicts": [0, 2], "base_confidence": 0.84},
+            {"text": "Neutron activation analysis (NAA): Rare earth element (REE) profile of core clay -- La/Sm ratio 4.2, Eu anomaly 0.71 -- matches Corinthian clay sources documented in MURR database. This clay source was used in both Hellenistic and Roman periods. No modern clay signatures (e.g., kaolin processing markers) detected.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.70},
+        ],
+    ),
+    # -- 6. Legal Contract Dispute -----------------------------------------
+    ScenarioTemplate(
+        theme="legal_dispute",
+        domain="Law",
+        hypothesis_pool=[
+            "The contract breach was caused by intentional fraud (deliberate misrepresentation of deliverables)",
+            "The contract breach was caused by gross negligence (failure to exercise reasonable care in execution)",
+            "The contract breach resulted from force majeure (unforeseeable external event beyond party control)",
+            "The contract breach was caused by a clerical/drafting error (ambiguous contract language)",
+            "The contract breach was caused by third-party interference (tortious interference with contract)",
+        ],
+        evidence_templates=[
+            {"text": "Email discovery (Exhibit A-14): Internal memo from respondent's VP of Sales dated 3 months before contract signing: 'We cannot deliver the Q4 volume at this price point. Proceed with signing anyway -- we will renegotiate or claim supply issues later.'", "supports": [0], "contradicts": [1, 2, 3], "base_confidence": 0.88},
+            {"text": "Forensic accounting report (Deloitte): Respondent's COGS for the contracted product were 340% of the contract price. Margin analysis shows the contract was economically unviable at inception. No evidence of post-signing cost increases.", "supports": [0], "contradicts": [2], "base_confidence": 0.82},
+            {"text": "Expert witness testimony (Prof. J. Richardson, Contract Law): The force majeure clause in Section 14.2 requires 'unforeseeable circumstances beyond reasonable control.' The cited supply disruption was widely reported 6 weeks before contract execution.", "supports": [0, 1], "contradicts": [2], "base_confidence": 0.75},
+            {"text": "Insurance claim records: Respondent filed a business interruption claim citing the same supply disruption. Insurer denied claim, stating 'The disruption was foreseeable and the insured failed to take reasonable mitigation steps.' Denial letter dated 2 weeks before breach notification.", "supports": [1], "contradicts": [2], "base_confidence": 0.70},
+            {"text": "Contract markup analysis (redline comparison): Section 7.3 contains a decimal point error -- '$14.50 per unit' in the signed version vs '$145.00 per unit' in all prior drafts. Neither party's legal counsel flagged the discrepancy during review.", "supports": [3], "contradicts": [0], "base_confidence": 0.78},
+            {"text": "Deposition transcript (respondent's CEO): 'We fully intended to perform. The supply chain disruption was unprecedented and made performance commercially impracticable.' Cross-examination revealed CEO was aware of disruption risk per industry reports.", "supports": [1, 2], "contradicts": [0], "base_confidence": 0.55},
+            {"text": "Third-party communications (subpoenaed): Competitor XYZ Corp sent formal offer to respondent's key supplier, offering 200% premium for exclusive supply rights. Supplier confirmed diversion of materials. XYZ Corp had prior knowledge of the contract.", "supports": [4], "contradicts": [0, 1, 2], "base_confidence": 0.80},
+            {"text": "Industry benchmarking data (IBISWorld): 73% of comparable contracts executed in the same period were fulfilled on time. Supply chain disruption affected only 12% of the specific material category. Market conditions were within normal variance.", "supports": [0, 1], "contradicts": [2], "base_confidence": 0.72},
+            {"text": "Contract execution records: Both parties used the same law firm (conflict-of-interest waiver signed). Junior associate drafted final version. Senior partner review was skipped due to year-end rush. No independent legal review by either party.", "supports": [3], "contradicts": [0, 4], "base_confidence": 0.65},
+            {"text": "Bank records (Exhibit F-7): Respondent transferred $2.4M to an offshore subsidiary 48 hours before sending breach notification. Transfer memo: 'Asset protection -- anticipated litigation.' Funds were earmarked for the contract's performance budget.", "supports": [0], "contradicts": [1, 2, 3], "base_confidence": 0.85},
+        ],
+    ),
+    # -- 7. Epidemiological Outbreak Investigation --------------------------
+    ScenarioTemplate(
+        theme="outbreak_investigation",
+        domain="Epidemiology",
+        hypothesis_pool=[
+            "The outbreak is caused by a foodborne pathogen (Salmonella enteritidis from contaminated poultry supply chain)",
+            "The outbreak is caused by waterborne contamination (Cryptosporidium from municipal treatment failure)",
+            "The outbreak is caused by an airborne respiratory pathogen (novel influenza A H5N1 reassortant)",
+            "The outbreak is caused by a vector-borne disease (Aedes aegypti-transmitted Dengue serotype 3)",
+            "The outbreak is caused by person-to-person contact transmission (Norovirus GII.4 Sydney variant)",
+        ],
+        evidence_templates=[
+            {"text": "Case-control study (n=340, CDC EIS team): Cases 8.2x more likely to have eaten at restaurant chain X in 72hr window (OR=8.2, 95% CI: 4.1-16.3, p<0.001). Dose-response relationship with chicken salad consumption. Attack rate at implicated locations: 34%.", "supports": [0], "contradicts": [1, 3], "base_confidence": 0.85},
+            {"text": "Municipal water testing (EPA Method 1623.1): Cryptosporidium oocysts detected at 4.2 oocysts/L in finished water (MCL: 0 per treatment technique). Turbidity exceedance logged at Plant B on days 3-5 of outbreak. UV disinfection unit offline for maintenance during that window.", "supports": [1], "contradicts": [0, 4], "base_confidence": 0.80},
+            {"text": "Genomic sequencing (Oxford Nanopore, MinION): Nasopharyngeal isolates from 12 cases show H5N1 with PB2 E627K mutation (mammalian adaptation marker). HA cleavage site: polybasic (PLREKRRKR/GLF). Phylogenetic analysis places strain in clade 2.3.4.4b with novel reassortment of NA segment.", "supports": [2], "contradicts": [0, 1, 4], "base_confidence": 0.88},
+            {"text": "Entomological survey (vector control district): Breteau Index 42 (high risk >20). Aedes aegypti trap positivity rate 67% in affected neighborhoods. Dengue NS1 antigen rapid test positive in 28 of 45 febrile cases. IgM/IgG serology pattern consistent with primary infection.", "supports": [3], "contradicts": [0, 1], "base_confidence": 0.78},
+            {"text": "Environmental sampling (food safety lab): Pulsed-field gel electrophoresis (PFGE) pattern of Salmonella isolate from chicken processing plant matches clinical isolates (100% band match, 3 enzymes). Whole-genome SNP analysis: 2-SNP cluster across 8 states. Traceback to Farm ID 447-GA.", "supports": [0], "contradicts": [1, 2, 3, 4], "base_confidence": 0.90},
+            {"text": "Epidemiological curve analysis: Incubation period distribution (median 31hr, range 18-56hr) is consistent with Norovirus (24-48hr typical). Secondary attack rate in households: 32%. Propagated pattern with 3 successive waves at 48-72hr intervals.", "supports": [4], "contradicts": [0, 3], "base_confidence": 0.72},
+            {"text": "Geographic clustering (SaTScan analysis): Cases NOT confined to any single water district -- crosses 3 municipal water systems. Spatial cluster centroid is at a shopping mall food court. Relative risk within 2km radius: 5.7 (p=0.002).", "supports": [0, 4], "contradicts": [1], "base_confidence": 0.75},
+            {"text": "Clinical presentation summary (n=189 confirmed cases): Fever >38.5C (89%), cough (76%), dyspnea (34%), bilateral infiltrates on CXR (28%). Hospitalization rate 18%. ICU admission 4.2%. CFR 1.1% (2 deaths, both >70yr with comorbidities). Median age: 41yr.", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.70},
+            {"text": "Contact tracing data (local health dept): Secondary cases cluster tightly around index cases -- no sustained community transmission. All secondary cases had prolonged face-to-face contact (>15 min, <2m) or shared contaminated surfaces. R0 estimated at 1.4 (95% CI: 0.9-2.1).", "supports": [4], "contradicts": [2, 3], "base_confidence": 0.68},
+            {"text": "Travel and exposure history (line list analysis): 78% of cases report no travel. No cases among tourists or recent arrivals. Onset dates span 18 days. No common outdoor exposure. 62% of cases are food service workers or their household contacts.", "supports": [0, 4], "contradicts": [2, 3], "base_confidence": 0.65},
         ],
     ),
 ]
@@ -706,13 +779,11 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
         ep = self._episode
         ep.submitted = True
 
-        # Pick the most-supported hypothesis from gathered evidence
+        # Blindly use the first active hypothesis as a fallback.
+        # We no longer use a smart heuristic fallback because it artificially
+        # inflates the scores of random agents that exhaust their budget.
         if ep.active_hypothesis_ids:
-            auto_answer = _find_best_hypothesis_from_evidence(
-                ep.active_hypothesis_ids,
-                ep.revealed_evidence,
-                ep.expert_hints,
-            )
+            auto_answer = ep.active_hypothesis_ids[0]
         else:
             auto_answer = 0
 
@@ -775,9 +846,14 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
 
     @staticmethod
     def _normalize_step_reward(raw: float) -> float:
-        """Map step rewards to a reasonable 0–1 scale. Uses sigmoid-like mapping."""
-        # Step rewards are small (-5 to +2), map to ~0.0–1.0
-        return round(1.0 / (1.0 + math.exp(-raw)), 4)
+        """Map step rewards to 0.0–1.0 via linear clamp.
+
+        Raw step rewards range from approx -5 (worst) to +2 (best).
+        Linear mapping avoids the sigmoid issue where raw=0 → 0.5.
+        """
+        # Linear: map [-5, +2] → [0.0, 1.0]
+        normalized = (raw + 5.0) / 7.0
+        return round(max(0.0, min(1.0, normalized)), 4)
 
     @staticmethod
     def _normalize_terminal_reward(raw: float) -> float:
@@ -805,14 +881,14 @@ TASK_CONFIGS: Dict[str, Dict[str, Any]] = {
         "num_hypotheses": 4,
         "num_evidence": 8,
         "noise_level": 0.3,
-        "budget": 15,
-        "description": "Standard challenge — moderate noise, requires evidence evaluation",
+        "budget": 12,
+        "description": "Standard challenge — moderate noise, tighter budget",
     },
     "hard": {
         "num_hypotheses": 5,
         "num_evidence": 10,
-        "noise_level": 0.45,
-        "budget": 12,
+        "noise_level": 0.50,
+        "budget": 8,
         "description": "Expert difficulty — high noise, tight budget, deep reasoning required",
     },
 }
@@ -885,6 +961,30 @@ _EXPERT_HINT_TEMPLATES: Dict[str, Dict[str, List[str]]] = {
             "Critical anachronisms and material inconsistencies make H{hid} very unlikely in my professional assessment.",
             "The isotopic analysis and tool-mark patterns are creating doubt about H{hid}.",
             "H{hid} cannot be excluded, but it doesn't fit the overall pattern of evidence as cleanly as alternatives.",
+        ],
+    },
+    "legal_dispute": {
+        "positive": [
+            "The documentary evidence, witness testimony, and financial records form a compelling narrative supporting H{hid}. In my experience litigating similar cases, this pattern is highly probative.",
+            "Several key exhibits are consistent with H{hid}, though opposing counsel will likely challenge the chain of custody on some documents.",
+            "H{hid} has some supporting indicators, but the evidentiary standard for this claim type is high. More discovery may be needed.",
+        ],
+        "negative": [
+            "The documentary record has critical gaps that undermine H{hid}. The timeline inconsistencies alone would be fatal at trial.",
+            "While H{hid} was initially plausible, the deposition testimony and financial forensics are moving the needle away from this theory.",
+            "H{hid} remains in the differential, but the burden of proof considerations make it a weaker position than alternatives.",
+        ],
+    },
+    "outbreak_investigation": {
+        "positive": [
+            "The epidemiological curve, case clustering, and laboratory confirmation strongly support H{hid}. I've investigated similar outbreaks at CDC and this signature is characteristic.",
+            "The attack rate data and exposure history are moderately consistent with H{hid}, though we're still awaiting confirmatory lab results.",
+            "H{hid} is among the plausible transmission routes, but the case-control study needs more statistical power before we can be confident.",
+        ],
+        "negative": [
+            "The incubation period distribution and spatial clustering are fundamentally inconsistent with H{hid}. The biology doesn't support this transmission route.",
+            "Accumulating lab data and contact tracing results are making H{hid} less likely. The secondary attack rate pattern doesn't fit.",
+            "H{hid} cannot be fully excluded, but the epidemiological evidence is pointing toward a different source.",
         ],
     },
 }

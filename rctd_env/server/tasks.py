@@ -76,7 +76,7 @@ TASKS: Dict[str, Dict[str, Any]] = {
         "num_hypotheses": 4,
         "num_evidence": 8,
         "noise_level": 0.3,
-        "budget": 15,
+        "budget": 12,
         "expected_success_rate": {
             "random": "~25%",
             "heuristic": "~50%",
@@ -124,7 +124,7 @@ TASKS: Dict[str, Dict[str, Any]] = {
         "num_hypotheses": 5,
         "num_evidence": 10,
         "noise_level": 0.45,
-        "budget": 12,
+        "budget": 8,
         "expected_success_rate": {
             "random": "~20%",
             "heuristic": "~35%",

@@ -95,18 +95,31 @@ def grade_episode(
     process_raw = max(0.0, min(1.0, process_raw))
     process = round(process_raw * 0.10, 4)
 
+    # Accuracy gate: when the agent gets the answer wrong, auxiliary
+    # components (efficiency, utilization, process) contribute at 25% rate.
+    # This prevents reward confounding where a random agent can score higher
+    # on hard tasks (tight budget → early submit → high efficiency) than on
+    # easy tasks. Wrong answers are capped at ~0.10 max from auxiliaries.
+    accuracy_gate = 1.0 if accuracy > 0 else 0.25
+
+    # Apply gate to auxiliary components
+    efficiency_gated = round(efficiency * accuracy_gate, 4)
+    utilization_gated = round(utilization * accuracy_gate, 4)
+    process_gated = round(process * accuracy_gate, 4)
+
     # Total score
-    score = round(accuracy + efficiency + utilization + process, 4)
+    score = round(accuracy + efficiency_gated + utilization_gated + process_gated, 4)
     score = max(0.0, min(1.0, score))
 
     return {
         "score": score,
         "components": {
             "accuracy": accuracy,
-            "efficiency": efficiency,
-            "utilization": utilization,
-            "process": process,
+            "efficiency": efficiency_gated,
+            "utilization": utilization_gated,
+            "process": process_gated,
         },
+        "accuracy_gate": accuracy_gate,
         "metrics": metrics,
         "task_id": task_id,
         "seed": seed,
