@@ -107,9 +107,9 @@ def grade_episode(
     utilization_gated = round(utilization * accuracy_gate, 4)
     process_gated = round(process * accuracy_gate, 4)
 
-    # Total score
+    # Total score — clamped to open interval (0, 1) per OpenEnv spec
     score = round(accuracy + efficiency_gated + utilization_gated + process_gated, 4)
-    score = max(0.0, min(1.0, score))
+    score = max(0.001, min(0.999, score))
 
     return {
         "score": score,

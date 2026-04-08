@@ -844,25 +844,30 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             metrics=None,
         )
 
+    _EPS = 1e-4  # Strict (0, 1) — validator rejects exact 0.0 and 1.0
+
     @staticmethod
     def _normalize_step_reward(raw: float) -> float:
-        """Map step rewards to 0.0–1.0 via linear clamp.
+        """Map step rewards to (0, 1) via linear clamp.
 
         Raw step rewards range from approx -5 (worst) to +2 (best).
         Linear mapping avoids the sigmoid issue where raw=0 → 0.5.
+        Clamped to open interval (ε, 1−ε) per OpenEnv validation spec.
         """
-        # Linear: map [-5, +2] → [0.0, 1.0]
+        # Linear: map [-5, +2] → (0, 1)
         normalized = (raw + 5.0) / 7.0
-        return round(max(0.0, min(1.0, normalized)), 4)
+        return round(max(RCTDEnvironment._EPS, min(1.0 - RCTDEnvironment._EPS, normalized)), 4)
 
     @staticmethod
     def _normalize_terminal_reward(raw: float) -> float:
-        """Map cumulative raw reward to 0.0–1.0.
+        """Map cumulative raw reward to (0, 1).
 
         Raw range: approx -120 (worst) to +120 (best).
+        Clamped to open interval (ε, 1−ε) per OpenEnv validation spec.
         """
         # Sigmoid normalization centered at 0
-        return round(1.0 / (1.0 + math.exp(-raw / 30.0)), 4)
+        normalized = 1.0 / (1.0 + math.exp(-raw / 30.0))
+        return round(max(RCTDEnvironment._EPS, min(1.0 - RCTDEnvironment._EPS, normalized)), 4)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
