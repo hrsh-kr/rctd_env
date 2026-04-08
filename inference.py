@@ -220,7 +220,7 @@ def run_episode(
     rewards: List[float] = []
     steps_taken = 0
     success = False
-    score = 0.0
+    score = 0.001
 
     try:
         obs = env.reset(seed=seed, task_id=task_id)

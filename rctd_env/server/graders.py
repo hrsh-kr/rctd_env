@@ -158,14 +158,14 @@ def grade_task(
         if fm:
             failure_modes[fm] = failure_modes.get(fm, 0) + 1
 
-    avg_score = sum(scores) / len(scores) if scores else 0.0
+    avg_score = sum(scores) / len(scores) if scores else 0.001
 
     return {
         "task_id": task_id,
         "num_episodes": num_episodes,
         "average_score": round(avg_score, 4),
-        "min_score": round(min(scores), 4) if scores else 0.0,
-        "max_score": round(max(scores), 4) if scores else 0.0,
+        "min_score": round(min(scores), 4) if scores else 0.001,
+        "max_score": round(max(scores), 4) if scores else 0.001,
         "success_rate": round(success_rate, 4),
         "failure_modes": failure_modes,
         "per_episode": results,
