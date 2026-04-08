@@ -104,8 +104,8 @@ Each episode presents:
 | Task | Hypotheses | Evidence | Noise | Budget | Description |
 |---|---|---|---|---|---|
 | **easy** | 3 | 6 | 10% | 20 | Low noise, generous budget |
-| **medium** | 4 | 8 | 30% | 15 | Moderate noise, requires verification |
-| **hard** | 5 | 10 | 45% | 12 | High noise, tight budget, deep reasoning |
+| **medium** | 4 | 8 | 30% | 12 | Moderate noise, requires verification |
+| **hard** | 5 | 10 | 50% | 8 | High noise, tight budget, deep reasoning |
 
 ### Grading (0.0 – 1.0)
 
@@ -134,7 +134,7 @@ These are **actual measured scores** with the accuracy-gated grader:
 
 *The difficulty gradient is deeply verified: performance declines monotonically (easy > medium > hard) for both baseline agents. The LLM outperforms the heuristic on medium difficulty (0.60 vs 0.34) where evidence complexity requires genuine reasoning beyond pattern matching.*
 
-*All baselines fully reproducible: `python inference.py --skip-llm` for heuristic/random, or set `OPENAI_API_KEY` for LLM baseline.*
+*All baselines fully reproducible: `python inference.py --skip-llm` for heuristic/random, or set `HF_TOKEN` for LLM baseline.*
 
 ### Failure Mode Distribution (Heuristic, n=150)
 
@@ -189,15 +189,15 @@ print(f"Score: {obs.reward}, Success: {obs.metrics['success']}")
 # Heuristic baseline (no API key needed)
 python inference.py
 
-# With OpenAI (spec-compliant)
-export OPENAI_API_KEY=sk-...
-export MODEL_NAME=gpt-4o-mini
-python inference.py
-
-# With HF API (fallback)
+# With HF API (primary, per spec)
 export HF_TOKEN=hf_...
 export API_BASE_URL=https://router.huggingface.co/v1
 export MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+python inference.py
+
+# With OpenAI (fallback)
+export OPENAI_API_KEY=sk-...
+export MODEL_NAME=gpt-4o-mini
 python inference.py
 ```
 
@@ -248,7 +248,7 @@ python -m rctd_env.training_example            # A100, ~90 min
 ## Architecture
 
 ```
-├── inference.py           ← Baseline inference (OpenAI client, OPENAI_API_KEY primary)
+├── inference.py           ← Baseline inference (OpenAI client, HF_TOKEN primary)
 ├── Dockerfile             ← Container (HF Spaces, port 7860)
 ├── server/app.py          ← Server entry point
 ├── openenv.yaml           ← OpenEnv manifest

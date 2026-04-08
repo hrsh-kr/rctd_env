@@ -4,15 +4,15 @@ RCTD Environment — Inference Script
 ===================================
 MANDATORY
 - Environment variables:
-    OPENAI_API_KEY   Your OpenAI API key (primary). Also accepts HF_TOKEN as fallback.
-    API_BASE_URL     The API endpoint for the LLM (default: https://api.openai.com/v1).
+    HF_TOKEN         Your Hugging Face API token (primary). Also accepts OPENAI_API_KEY as fallback.
+    API_BASE_URL     The API endpoint for the LLM (default: https://router.huggingface.co/v1).
     MODEL_NAME       The model identifier to use for inference.
     LOCAL_IMAGE_NAME The name of the local image to use for the environment.
 
 STDOUT FORMAT
     [START] task=<task_name> env=rctd_env model=<model_name>
     [STEP]  step=<n> action=<action_str> reward=<0.00> done=<true|false> error=<msg|null>
-    [END]   success=<true|false> steps=<n> score=<score> rewards=<r1,r2,...,rn>
+    [END]   success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
 """
 
 import json
@@ -31,10 +31,12 @@ from rctd_env.server.graders import grade_all_tasks, heuristic_policy, random_po
 # Environment Variables (MANDATORY)
 # ═══════════════════════════════════════════════════════════════════════════
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
-MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-HF_TOKEN = os.getenv("HF_TOKEN")  # Fallback API key
+HF_TOKEN = os.getenv("HF_TOKEN")
+if HF_TOKEN is None:
+    raise ValueError("HF_TOKEN environment variable is required")
+API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Fallback API key
 LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 BENCHMARK = "rctd_env"
@@ -60,10 +62,10 @@ def log_step(step: int, action: str, reward: float, done: bool, error: Optional[
     )
 
 
-def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> None:
+def log_end(success: bool, steps: int, rewards: List[float]) -> None:
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     print(
-        f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}",
+        f"[END] success={str(success).lower()} steps={steps} rewards={rewards_str}",
         flush=True,
     )
 
@@ -276,7 +278,7 @@ def run_episode(
         success = obs.metrics.get("success", False) if obs.metrics else False
 
     finally:
-        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+        log_end(success=success, steps=steps_taken, rewards=rewards)
 
     return {"task_id": task_id, "seed": seed, "score": score, "success": success}
 
@@ -288,17 +290,10 @@ def run_episode(
 def main() -> None:
     env = RCTDEnvironment()
 
-    # Determine API key: OPENAI_API_KEY is primary (per spec), HF_TOKEN is fallback
-    api_key = OPENAI_API_KEY or HF_TOKEN
-
-    if api_key:
-        client = OpenAI(base_url=API_BASE_URL, api_key=api_key)
-        policy_name = MODEL_NAME
-        print(f"[DEBUG] Using LLM: {MODEL_NAME} via {API_BASE_URL}", file=sys.stderr, flush=True)
-    else:
-        client = None
-        policy_name = "heuristic"
-        print("[DEBUG] No OPENAI_API_KEY found, using heuristic baseline", file=sys.stderr, flush=True)
+    # HF_TOKEN is mandatory (enforced above), use it as primary API key
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
+    policy_name = MODEL_NAME
+    print(f"[DEBUG] Using LLM: {MODEL_NAME} via {API_BASE_URL}", file=sys.stderr, flush=True)
 
     # Run all 3 tasks
     for task_id in ["easy", "medium", "hard"]:

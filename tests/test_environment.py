@@ -36,13 +36,13 @@ class TestEnvironmentBasics:
         env = RCTDEnvironment()
         obs = env.reset(seed=42, task_id="medium")
         assert len(obs.hypotheses) == 4
-        assert obs.budget_remaining == 15
+        assert obs.budget_remaining == 12
 
     def test_reset_hard(self):
         env = RCTDEnvironment()
         obs = env.reset(seed=42, task_id="hard")
         assert len(obs.hypotheses) == 5
-        assert obs.budget_remaining == 12
+        assert obs.budget_remaining == 8
 
     def test_deterministic_seeding(self):
         """Same seed should produce identical scenarios."""
@@ -154,7 +154,7 @@ class TestEdgeCases:
     def test_budget_exhaustion(self):
         """When budget runs out, episode should end."""
         env = RCTDEnvironment()
-        obs = env.reset(seed=42, task_id="hard")  # budget=12
+        obs = env.reset(seed=42, task_id="hard")  # budget=8
         # Spend all budget on experiments (cost 3 each) and reads (cost 1)
         for i in range(12):
             if obs.done:
