@@ -76,6 +76,8 @@ Each episode presents:
 | 🔒 Cybersecurity | Insider threat vs. APT vs. zero-day vs. phishing vs. misconfig |
 | 🌍 Climate Attribution | El Niño vs. greenhouse gas vs. volcanic vs. urban heat vs. deforestation |
 | 🏺 Artifact Authentication | Authentic vs. forgery vs. misdated vs. replica vs. composite |
+| ⚖️ Legal Contract Dispute | Fraud vs. negligence vs. force majeure vs. drafting error vs. interference |
+| 🦠 Epidemiological Outbreak | Foodborne vs. waterborne vs. airborne vs. vector-borne vs. contact |
 
 ---
 
@@ -134,7 +136,7 @@ These are **actual measured scores** with the accuracy-gated grader:
 
 *The difficulty gradient is deeply verified: performance declines monotonically (easy > medium > hard) for both baseline agents. The LLM outperforms the heuristic on medium difficulty (0.60 vs 0.34) where evidence complexity requires genuine reasoning beyond pattern matching.*
 
-*All baselines fully reproducible: `python inference.py --skip-llm` for heuristic/random, or set `HF_TOKEN` for LLM baseline.*
+*All baselines fully reproducible: `python inference.py --skip-llm` for heuristic/random (no API key needed), or set `HF_TOKEN` for LLM baseline.*
 
 ### Failure Mode Distribution (Heuristic, n=150)
 
@@ -186,8 +188,8 @@ print(f"Score: {obs.reward}, Success: {obs.metrics['success']}")
 ### Inference Script
 
 ```bash
-# Heuristic baseline (no API key needed)
-python inference.py
+# Heuristic + random baselines (no API key needed)
+python inference.py --skip-llm
 
 # With HF API (primary, per spec)
 export HF_TOKEN=hf_...

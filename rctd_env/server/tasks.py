@@ -123,7 +123,7 @@ TASKS: Dict[str, Dict[str, Any]] = {
         "difficulty": "hard",
         "num_hypotheses": 5,
         "num_evidence": 10,
-        "noise_level": 0.45,
+        "noise_level": 0.50,
         "budget": 8,
         "expected_success_rate": {
             "random": "~20%",

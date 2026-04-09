@@ -1,0 +1,72 @@
+{
+  "baseline_scores": {
+    "random": {
+      "overall_score": 0.3885,
+      "tasks": {
+        "easy": {
+          "average_score": 0.5619,
+          "success_rate": 0.6667,
+          "min_score": 0.04,
+          "max_score": 0.8457,
+          "failure_modes": {
+            "discarded_correct_hypothesis": 1
+          }
+        },
+        "medium": {
+          "average_score": 0.5586,
+          "success_rate": 0.6667,
+          "min_score": 0.0558,
+          "max_score": 0.8499,
+          "failure_modes": {
+            "budget_exhausted": 1,
+            "insufficient_evidence": 1
+          }
+        },
+        "hard": {
+          "average_score": 0.0451,
+          "success_rate": 0.0,
+          "min_score": 0.025,
+          "max_score": 0.0562,
+          "failure_modes": {
+            "discarded_correct_hypothesis": 2,
+            "insufficient_evidence": 1
+          }
+        }
+      }
+    },
+    "heuristic": {
+      "overall_score": 0.4072,
+      "tasks": {
+        "easy": {
+          "average_score": 0.437,
+          "success_rate": 0.6667,
+          "min_score": 0.001,
+          "max_score": 0.655,
+          "failure_modes": {
+            "budget_exhausted": 1
+          }
+        },
+        "medium": {
+          "average_score": 0.5003,
+          "success_rate": 0.6667,
+          "min_score": 0.0156,
+          "max_score": 0.7426,
+          "failure_modes": {
+            "budget_exhausted": 1
+          }
+        },
+        "hard": {
+          "average_score": 0.2842,
+          "success_rate": 0.3333,
+          "min_score": 0.025,
+          "max_score": 0.8025,
+          "failure_modes": {
+            "budget_exhausted": 2
+          }
+        }
+      }
+    }
+  },
+  "num_episodes_per_task": 3,
+  "seed": 42
+}

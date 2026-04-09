@@ -164,17 +164,17 @@ class TestEdgeCases:
         assert obs.budget_remaining >= 0
 
     def test_reward_in_0_1_range(self):
-        """All rewards must be in [0, 1]."""
+        """All rewards must be in open interval (0, 1) per OpenEnv spec."""
         env = RCTDEnvironment()
         for seed in range(10):
             obs = env.reset(seed=seed, task_id="medium")
             while not obs.done:
                 obs = env.step(RCTDAction(type="read_evidence", evidence_id=0))
-                assert 0.0 <= obs.reward <= 1.0
+                assert 0.0 < obs.reward < 1.0, f"Reward {obs.reward} not in open interval (0, 1)"
                 if obs.step_count > 20:
                     obs = env.step(RCTDAction(type="submit_answer", hypothesis_id=0))
                     break
-            assert 0.0 <= obs.reward <= 1.0
+            assert 0.0 < obs.reward < 1.0, f"Terminal reward {obs.reward} not in open interval (0, 1)"
 
     def test_step_after_done_raises_or_noop(self):
         """Stepping after episode end should be handled gracefully."""

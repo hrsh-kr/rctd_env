@@ -13,8 +13,16 @@ STDOUT FORMAT
     [START] task=<task_name> env=rctd_env model=<model_name>
     [STEP]  step=<n> action=<action_str> reward=<0.00> done=<true|false> error=<msg|null>
     [END]   success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
+
+USAGE
+    # Heuristic + random baselines only (no API key needed):
+    python inference.py --skip-llm
+
+    # LLM inference (requires HF_TOKEN):
+    HF_TOKEN=hf_... python inference.py
 """
 
+import argparse
 import json
 import os
 import sys
@@ -28,21 +36,36 @@ from rctd_env.server.environment import RCTDEnvironment
 from rctd_env.server.graders import grade_all_tasks, heuristic_policy, random_policy
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Environment Variables (MANDATORY)
+# Environment Variables (read lazily — only validated when LLM mode is used)
 # ═══════════════════════════════════════════════════════════════════════════
 
-HF_TOKEN = os.getenv("HF_TOKEN")
-if HF_TOKEN is None:
-    raise ValueError("HF_TOKEN environment variable is required")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Fallback API key
 LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 BENCHMARK = "rctd_env"
 MAX_STEPS = 50
 TEMPERATURE = 0.1
 MAX_TOKENS = 100
+
+
+def _get_api_key() -> str:
+    """Get the API key from environment variables.
+
+    HF_TOKEN is the primary credential per spec.
+    OPENAI_API_KEY is accepted as a fallback.
+    """
+    hf_token = os.getenv("HF_TOKEN")
+    if hf_token:
+        return hf_token
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if openai_key:
+        print("[DEBUG] Using OPENAI_API_KEY as fallback", file=sys.stderr, flush=True)
+        return openai_key
+    raise ValueError(
+        "HF_TOKEN environment variable is required for LLM inference. "
+        "Set HF_TOKEN=hf_... or use --skip-llm for baseline-only mode."
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -274,7 +297,7 @@ def run_episode(
                 error=None,
             )
 
-        score = obs.reward  # Already in [0, 1]
+        score = obs.reward  # Already in (0, 1)
         success = obs.metrics.get("success", False) if obs.metrics else False
 
     finally:
@@ -284,21 +307,119 @@ def run_episode(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
+# Baseline Runner (--skip-llm mode)
+# ═══════════════════════════════════════════════════════════════════════════
+
+def run_baselines(num_episodes: int = 10, base_seed: int = 42) -> Dict[str, Any]:
+    """Run heuristic and random baselines across all tasks.
+
+    Returns results dict and writes to baseline.json.
+    """
+    env = RCTDEnvironment()
+    results = {}
+
+    for agent_name, policy in [("random", random_policy), ("heuristic", heuristic_policy)]:
+        print(f"\n{'='*60}", file=sys.stderr, flush=True)
+        print(f"Running {agent_name} baseline ({num_episodes} episodes × 3 tasks)...",
+              file=sys.stderr, flush=True)
+
+        agent_results = grade_all_tasks(
+            env=env,
+            policy=policy,
+            num_episodes=num_episodes,
+            base_seed=base_seed,
+        )
+        results[agent_name] = {
+            "overall_score": agent_results["overall_score"],
+            "tasks": {
+                task_id: {
+                    "average_score": task_data["average_score"],
+                    "success_rate": task_data["success_rate"],
+                    "min_score": task_data["min_score"],
+                    "max_score": task_data["max_score"],
+                    "failure_modes": task_data["failure_modes"],
+                }
+                for task_id, task_data in agent_results["tasks"].items()
+            },
+        }
+        print(f"  {agent_name} overall: {agent_results['overall_score']:.4f}",
+              file=sys.stderr, flush=True)
+        for tid, td in agent_results["tasks"].items():
+            print(f"    {tid}: score={td['average_score']:.4f}, "
+                  f"success={td['success_rate']:.0%}",
+                  file=sys.stderr, flush=True)
+
+    baseline_output = {
+        "baseline_scores": results,
+        "num_episodes_per_task": num_episodes,
+        "seed": base_seed,
+    }
+
+    # Write baseline.json
+    output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "baseline.json")
+    with open(output_path, "w") as f:
+        json.dump(baseline_output, f, indent=2)
+    print(f"\n✅ Baseline results written to {output_path}", file=sys.stderr, flush=True)
+
+    return baseline_output
+
+
+# ═══════════════════════════════════════════════════════════════════════════
 # Main
 # ═══════════════════════════════════════════════════════════════════════════
 
 def main() -> None:
-    env = RCTDEnvironment()
+    parser = argparse.ArgumentParser(
+        description="RCTD Environment — Inference & Baseline Script",
+    )
+    parser.add_argument(
+        "--skip-llm",
+        action="store_true",
+        help="Run only heuristic and random baselines (no API key needed)",
+    )
+    parser.add_argument(
+        "--num-episodes",
+        type=int,
+        default=10,
+        help="Number of episodes per task for baseline mode (default: 10)",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Base seed for reproducibility (default: 42)",
+    )
+    args = parser.parse_args()
 
-    # HF_TOKEN is mandatory (enforced above), use it as primary API key
-    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
+    if args.skip_llm:
+        # Baseline-only mode — no API key needed
+        print("Running baseline agents (--skip-llm mode)...", file=sys.stderr, flush=True)
+        run_baselines(num_episodes=args.num_episodes, base_seed=args.seed)
+        return
+
+    # LLM mode — requires HF_TOKEN
+    api_key = _get_api_key()
+    env = RCTDEnvironment()
+    client = OpenAI(base_url=API_BASE_URL, api_key=api_key)
     policy_name = MODEL_NAME
     print(f"[DEBUG] Using LLM: {MODEL_NAME} via {API_BASE_URL}", file=sys.stderr, flush=True)
 
     # Run all 3 tasks
+    all_results = []
     for task_id in ["easy", "medium", "hard"]:
         for seed in range(3):  # 3 episodes per task
-            run_episode(env, client, task_id, seed=seed, policy_name=policy_name)
+            result = run_episode(env, client, task_id, seed=seed, policy_name=policy_name)
+            all_results.append(result)
+
+    # Write baseline.json with LLM results
+    output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "baseline.json")
+    with open(output_path, "w") as f:
+        json.dump({
+            "model": MODEL_NAME,
+            "api_base": API_BASE_URL,
+            "episodes": all_results,
+        }, f, indent=2)
+    print(f"\n✅ Results written to {output_path}", file=sys.stderr, flush=True)
 
 
 if __name__ == "__main__":

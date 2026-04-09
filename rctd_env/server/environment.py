@@ -532,7 +532,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             return self._force_budget_exhausted()
 
         return self._make_obs(
-            reward=self._normalize_step_reward(step_reward),
+            reward=step_reward,
             message=f"Read evidence E{eid}: \"{hidden.text}\" "
                     f"— Appears to support hypothesis/hypotheses: "
                     f"{[f'H{s}' for s in apparent_support]} "
@@ -593,7 +593,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             return self._force_budget_exhausted()
 
         return self._make_obs(
-            reward=self._normalize_step_reward(step_reward),
+            reward=step_reward,
             message=f"Experiment on E{eid} complete. VERIFIED support: "
                     f"{[f'H{s}' for s in hidden.true_support]} "
                     f"(confidence: 100%)",
@@ -646,7 +646,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             return self._force_budget_exhausted()
 
         return self._make_obs(
-            reward=self._normalize_step_reward(step_reward),
+            reward=step_reward,
             message=f"Expert consulted on H{hid}: \"{hint_text}\" "
                     f"(estimated probability: {prob:.0%})",
         )
@@ -694,7 +694,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
         })
 
         return self._make_obs(
-            reward=self._normalize_step_reward(step_reward),
+            reward=step_reward,
             message=msg,
         )
 
