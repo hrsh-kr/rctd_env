@@ -227,7 +227,7 @@ def random_policy(obs: RCTDObservation) -> RCTDAction:
             return RCTDAction(type="read_evidence", evidence_id=rng.choice(unread))
         else:
             # All read, submit
-            hid = rng.choice(obs.active_hypothesis_ids) if obs.active_hypothesis_ids else 0
+            hid = rng.choice(obs.active_hypothesis_ids) if obs.active_hypothesis_ids else 0.001
             return RCTDAction(type="submit_answer", hypothesis_id=hid)
 
     elif action_type == "consult_expert":
@@ -237,7 +237,7 @@ def random_policy(obs: RCTDObservation) -> RCTDAction:
                 hypothesis_id=rng.choice(obs.active_hypothesis_ids),
             )
         else:
-            hid = rng.choice(obs.active_hypothesis_ids) if obs.active_hypothesis_ids else 0
+            hid = rng.choice(obs.active_hypothesis_ids) if obs.active_hypothesis_ids else 0.001
             return RCTDAction(type="submit_answer", hypothesis_id=hid)
 
     elif action_type == "discard_hypothesis":
@@ -247,11 +247,11 @@ def random_policy(obs: RCTDObservation) -> RCTDAction:
                 hypothesis_id=rng.choice(obs.active_hypothesis_ids),
             )
         else:
-            hid = obs.active_hypothesis_ids[0] if obs.active_hypothesis_ids else 0
+            hid = obs.active_hypothesis_ids[0] if obs.active_hypothesis_ids else 0.001
             return RCTDAction(type="submit_answer", hypothesis_id=hid)
 
     else:  # submit_answer
-        hid = rng.choice(obs.active_hypothesis_ids) if obs.active_hypothesis_ids else 0
+        hid = rng.choice(obs.active_hypothesis_ids) if obs.active_hypothesis_ids else 0.001
         return RCTDAction(type="submit_answer", hypothesis_id=hid)
 
 
@@ -304,7 +304,7 @@ def heuristic_policy(obs: RCTDObservation) -> RCTDAction:
             support_counts[hint.hypothesis_id] += hint.estimated_probability
 
     if not support_counts:
-        hid = obs.active_hypothesis_ids[0] if obs.active_hypothesis_ids else 0
+        hid = obs.active_hypothesis_ids[0] if obs.active_hypothesis_ids else 0.001
         return RCTDAction(type="submit_answer", hypothesis_id=hid)
 
     # Phase 3: Consult expert when top-2 are close or when we haven't verified
