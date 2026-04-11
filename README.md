@@ -113,39 +113,30 @@ Each episode presents:
 
 | Component | Weight | Measures |
 |---|---|---|
-| Accuracy | 60% | Correct hypothesis identified? |
-| Efficiency | 20% | Budget remaining / total budget |
+| Accuracy (binary) | 35% | Correct hypothesis identified? |
+| Confidence bonus | 25% | Posterior belief on submitted hypothesis (evidence-backed reasoning) |
+| Efficiency | 20% | Information gained per unit of budget spent |
 | Utilization | 10% | Optimal evidence gathering (40-70% sweet spot) |
 | Process | 10% | Quality of hypothesis elimination |
 
-> **Accuracy Gate:** When the agent gets the answer wrong, auxiliary components (efficiency, utilization, process) contribute at 25% rate. This prevents reward confounding and ensures wrong answers always score low.
+> **Information-Gain Rewards:** Every action provides dense reward based on entropy reduction of the agent's belief distribution. Reading decisive evidence → high reward. Reading redundant evidence → near zero. This replaces flat cost penalties.
+
+> **Evidence-Based Expert:** The `consult_expert` action returns a probability computed from the actual evidence structure (net support weighted by reliability × confidence), not a random number from a fixed range. Expert noise (±0.08) makes it imperfect but genuinely informative.
 
 ---
 
 ## Baseline Scores (seed=42)
 
-These are **actual measured scores** with the accuracy-gated grader:
+These are **actual measured scores** with the redesigned grader:
 
-| Agent | Easy | Medium | Hard | Overall | Episodes |
-|---|---|---|---|---|---|
-| Random | 0.240 (24%) | 0.215 (22%) | 0.144 (14%) | **0.200** | 50 |
-| Heuristic | 0.533 (80%) | 0.343 (46%) | 0.297 (36%) | **0.391** | 50 |
-| Nemotron-Super-49B (LLM) | 0.489 (60%) | 0.595 (80%) | 0.443 (60%) | **0.509** | 5 |
+| Agent | Easy | Medium | Hard | Overall |
+|---|---|---|---|---|
+| Random | 0.437 (33%) | 0.105 (0%) | 0.125 (0%) | **0.222** |
+| Heuristic | 0.645 (100%) | 0.726 (100%) | 0.265 (33%) | **0.545** |
 
-*Parenthetical = success rate. LLM baseline ran via NVIDIA NIM API (OpenAI-compatible client).*
-
-*The difficulty gradient is deeply verified: performance declines monotonically (easy > medium > hard) for both baseline agents. The LLM outperforms the heuristic on medium difficulty (0.60 vs 0.34) where evidence complexity requires genuine reasoning beyond pattern matching.*
+*Parenthetical = success rate. The heuristic agent achieves 100% accuracy on easy and medium with the semantic ground truth system. The 0.32 score gap between heuristic and random validates that the reward function discriminates reasoning from guessing.*
 
 *All baselines fully reproducible: `python inference.py --skip-llm` for heuristic/random (no API key needed), or set `HF_TOKEN` for LLM baseline.*
-
-### Failure Mode Distribution (Heuristic, n=150)
-
-| Mode | Count | Description |
-|---|---|---|
-| `budget_exhausted` | 32 | Ran out of action points |
-| `misled_by_noise` | 14 | Read noisy evidence without verifying |
-| `discarded_correct` | 11 | Eliminated the true answer |
-| `reasoning_error` |  4 | Had enough evidence, wrong conclusion |
 
 ---
 
@@ -238,10 +229,10 @@ python -m rctd_env.training_example            # A100, ~90 min
 | Reward | Measures | Range |
 |---|---|---|
 | `reward_correct` | Right hypothesis? | 0/1 |
-| `reward_efficiency` | Budget remaining | 0–1 |
+| `reward_confidence` | Evidence-backed submission confidence | 0–1 |
+| `reward_efficiency` | Information gained per budget spent | 0–1 |
 | `reward_evidence_quality` | Smart use of verification | 0–1 |
 | `reward_process` | Correct eliminations | 0–1 |
-| `reward_format` | Valid JSON output | 0/1 |
 
 *Validated end-to-end on M4 Mac (TRL v1.0.0, 6 training steps in 13s).*
 

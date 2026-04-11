@@ -264,3 +264,111 @@ class TestPolicies:
                 obs = env.step(action)
                 steps += 1
             assert obs.done or steps >= 50
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# New Tests (RL-Principled Redesign)
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+class TestSemanticGroundTruth:
+    """Test that ground truth is derived from evidence, not random."""
+
+    def test_true_hypothesis_has_most_support(self):
+        """The true hypothesis should have the highest net evidence support."""
+        env = RCTDEnvironment()
+        for seed in range(20):
+            obs = env.reset(seed=seed, task_id="medium")
+            ep = env._episode
+
+            # Calculate net support from evidence for each hypothesis
+            support_scores = [0.0] * len(ep.hypotheses)
+            for ev in ep.evidence:
+                for h in ev.true_support:
+                    if h < len(support_scores):
+                        support_scores[h] += ev.base_confidence
+                for h in ev.true_contradiction:
+                    if h < len(support_scores):
+                        support_scores[h] -= ev.base_confidence * 0.5
+
+            # True hypothesis should be among the top supported
+            true_score = support_scores[ep.true_hypothesis_id]
+            top_score = max(support_scores)
+            # Allow small tolerance for tie-breaking
+            assert true_score >= top_score - 0.15, \
+                f"Seed {seed}: true_id={ep.true_hypothesis_id} " \
+                f"score={true_score:.2f} vs top={top_score:.2f}"
+
+
+class TestInformationGainRewards:
+    """Test that info-gain rewards provide dense, meaningful signal."""
+
+    def test_step_rewards_include_info_gain(self):
+        """Action history should track info_gain at each step."""
+        env = RCTDEnvironment()
+        obs = env.reset(seed=42, task_id="easy")
+        obs = env.step(RCTDAction(type="read_evidence", evidence_id=0))
+        assert len(obs.action_history) == 1
+        assert "info_gain" in obs.action_history[0]
+
+    def test_total_information_gain_in_metrics(self):
+        """Terminal metrics should include total_information_gain."""
+        env = RCTDEnvironment()
+        obs = env.reset(seed=42, task_id="easy")
+        # Read some evidence then submit
+        obs = env.step(RCTDAction(type="read_evidence", evidence_id=0))
+        obs = env.step(RCTDAction(type="read_evidence", evidence_id=1))
+        true_h = env.state.true_hypothesis_id
+        obs = env.step(RCTDAction(type="submit_answer", hypothesis_id=true_h))
+        assert obs.done
+        assert "total_information_gain" in obs.metrics
+        assert obs.metrics["total_information_gain"] >= 0
+
+    def test_submission_confidence_in_metrics(self):
+        """Terminal metrics should include submission_confidence."""
+        env = RCTDEnvironment()
+        obs = env.reset(seed=42, task_id="easy")
+        true_h = env.state.true_hypothesis_id
+        obs = env.step(RCTDAction(type="submit_answer", hypothesis_id=true_h))
+        assert "submission_confidence" in obs.metrics
+
+
+class TestEvidenceBasedExpert:
+    """Test that expert opinions are grounded in evidence structure."""
+
+    def test_expert_prob_correlates_with_truth(self):
+        """Expert should generally give higher prob to the true hypothesis."""
+        env = RCTDEnvironment()
+        true_probs = []
+        false_probs = []
+
+        for seed in range(20):
+            obs = env.reset(seed=seed, task_id="medium")
+            true_h = env.state.true_hypothesis_id
+
+            # Consult expert on true hypothesis
+            obs_true = env.step(RCTDAction(type="consult_expert", hypothesis_id=true_h))
+            true_prob = obs_true.expert_hints[-1].estimated_probability
+            true_probs.append(true_prob)
+
+            # Consult expert on a false hypothesis
+            false_h = [h for h in obs.active_hypothesis_ids if h != true_h][0]
+            obs_false = env.step(RCTDAction(type="consult_expert", hypothesis_id=false_h))
+            false_prob = obs_false.expert_hints[-1].estimated_probability
+            false_probs.append(false_prob)
+
+        avg_true = sum(true_probs) / len(true_probs)
+        avg_false = sum(false_probs) / len(false_probs)
+        # On average, expert should rate true hypothesis higher
+        assert avg_true > avg_false, \
+            f"Expert avg true prob ({avg_true:.3f}) should exceed " \
+            f"avg false prob ({avg_false:.3f})"
+
+    def test_expert_includes_info_gain(self):
+        """Expert consultation should track info_gain."""
+        env = RCTDEnvironment()
+        obs = env.reset(seed=42, task_id="easy")
+        obs = env.step(RCTDAction(type="consult_expert", hypothesis_id=0))
+        assert "info_gain" in obs.action_history[-1]
+        assert "expert_prob" in obs.action_history[-1]
+

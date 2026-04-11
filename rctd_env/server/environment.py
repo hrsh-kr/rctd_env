@@ -55,14 +55,14 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
             "The patient's condition is caused by a genetic mutation (Factor V Leiden thrombophilia)",
         ],
         evidence_templates=[
-            {"text": "CBC with differential: WBC 18,200/uL (ref: 4,500-11,000), neutrophils 82%, bands 12% indicating left shift. Platelet count 142,000/uL (mild thrombocytopenia). ESR 68 mm/hr.", "supports": [0, 1, 3], "contradicts": [], "base_confidence": 0.7},
+            {"text": "CBC with differential: WBC 18,200/uL (ref: 4,500-11,000), neutrophils 82%, bands 12% indicating left shift. Platelet count 142,000/uL (mild thrombocytopenia). ESR 68 mm/hr.", "supports": [0, 1, 3], "contradicts": [4], "base_confidence": 0.7},
             {"text": "Blood culture (2 of 2 sets): Gram-positive cocci in clusters growing at 14 hours. Preliminary identification pending MALDI-TOF confirmation. Sensitivity panel ordered.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.88},
             {"text": "Procalcitonin level: 8.4 ng/mL (ref: <0.1 ng/mL). CRP 186 mg/L. Lactate 3.2 mmol/L. qSOFA score: 2 (altered mentation + RR 24).", "supports": [0], "contradicts": [4], "base_confidence": 0.82},
             {"text": "Monospot test (heterophile antibody): Positive. Peripheral smear shows 38% atypical lymphocytes. EBV VCA IgM titer elevated at 1:320.", "supports": [1], "contradicts": [0, 2], "base_confidence": 0.75},
             {"text": "Red blood cell cholinesterase level: 2,100 U/L (ref: 5,300-12,900 U/L), consistent with 60% enzyme inhibition. Serum cholinesterase similarly depressed at 1,800 U/L.", "supports": [2], "contradicts": [0, 1, 3, 4], "base_confidence": 0.85},
             {"text": "Patient presents with SLUDGE syndrome: salivation, lacrimation, urination, defecation, GI distress, emesis. Pupils 2mm bilaterally (miosis). Fasciculations noted in deltoids.", "supports": [2], "contradicts": [1, 4], "base_confidence": 0.78},
             {"text": "ANA titer: 1:640, homogeneous pattern. Anti-dsDNA antibodies: 240 IU/mL (ref: <30). Complement C3: 52 mg/dL (low), C4: 8 mg/dL (low). Urinalysis: proteinuria 2+, RBC casts.", "supports": [3], "contradicts": [0, 2], "base_confidence": 0.80},
-            {"text": "CT chest shows bilateral ground-glass opacities with subpleural sparing. No cavitation or lobar consolidation. Mediastinal lymphadenopathy present (largest node 2.1cm).", "supports": [1, 3], "contradicts": [], "base_confidence": 0.55},
+            {"text": "CT chest shows bilateral ground-glass opacities with subpleural sparing. No cavitation or lobar consolidation. Mediastinal lymphadenopathy present (largest node 2.1cm).", "supports": [1, 3], "contradicts": [2, 4], "base_confidence": 0.55},
             {"text": "Genetic panel (thrombophilia workup): Factor V Leiden mutation detected (heterozygous, R506Q). Protein C activity normal at 118%. MTHFR C677T variant: heterozygous.", "supports": [4], "contradicts": [0, 1, 2], "base_confidence": 0.90},
             {"text": "Blood smear peripheral morphology: Toxic granulation and Dohle bodies in neutrophils. No schistocytes or spherocytes. Reticulocyte count 1.8% (normal). Haptoglobin 145 mg/dL (normal), ruling out hemolytic process.", "supports": [0], "contradicts": [3, 4], "base_confidence": 0.72},
             {"text": "Lumbar puncture results: CSF WBC 2 cells/uL (normal), protein 38 mg/dL (normal), glucose 62 mg/dL (normal). No organisms on Gram stain. CSF HSV PCR negative. Opening pressure 14 cmH2O.", "supports": [0, 3], "contradicts": [1], "base_confidence": 0.60},
@@ -85,12 +85,12 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
         ],
         evidence_templates=[
             {"text": "Baltic Dry Index surged 47% in 3 weeks (from 1,240 to 1,824). Drewry World Container Index shows 40-foot container rates Shanghai-Rotterdam at $4,890 (up from $1,420 baseline). Maersk issued force majeure on 12 routes.", "supports": [0], "contradicts": [1], "base_confidence": 0.82},
-            {"text": "Kastle Systems back-to-work barometer: US office occupancy at 47.3% (pre-pandemic: 95%). WeWork filed Chapter 11. Cushman and Wakefield reports 950M sq ft of vacant US office space (18.2% vacancy, highest since 1991).", "supports": [1], "contradicts": [], "base_confidence": 0.75},
-            {"text": "European Commission published final EU AI Act implementing rules. Compliance deadline: Aug 2025 for prohibited systems. Estimated industry compliance cost: 31B EUR across EU tech sector. GDPR-style extraterritorial scope confirmed.", "supports": [2], "contradicts": [], "base_confidence": 0.70},
-            {"text": "IBM announced 1,121-qubit Condor processor achieving quantum volume 2^18. Google DeepMind published fault-tolerant error correction below threshold. D-Wave stock +340% in 60 days. McKinsey estimates $1.3T quantum market by 2035.", "supports": [3], "contradicts": [], "base_confidence": 0.68},
+            {"text": "Kastle Systems back-to-work barometer: US office occupancy at 47.3% (pre-pandemic: 95%). WeWork filed Chapter 11. Cushman and Wakefield reports 950M sq ft of vacant US office space (18.2% vacancy, highest since 1991).", "supports": [1], "contradicts": [0, 3], "base_confidence": 0.75},
+            {"text": "European Commission published final EU AI Act implementing rules. Compliance deadline: Aug 2025 for prohibited systems. Estimated industry compliance cost: 31B EUR across EU tech sector. GDPR-style extraterritorial scope confirmed.", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.70},
+            {"text": "IBM announced 1,121-qubit Condor processor achieving quantum volume 2^18. Google DeepMind published fault-tolerant error correction below threshold. D-Wave stock +340% in 60 days. McKinsey estimates $1.3T quantum market by 2035.", "supports": [3], "contradicts": [0, 1], "base_confidence": 0.68},
             {"text": "PBOC set USD/CNY midpoint at 7.1088, strongest fix in 4 months. FX reserves drew down $26.8B. Offshore CNH implied vol spiked to 8.2%. Carry trade unwind in AUD/JPY triggered margin calls across Asian desks.", "supports": [4], "contradicts": [1, 3], "base_confidence": 0.73},
             {"text": "Port of Rotterdam throughput data: TEU volume down 28% YoY. Average vessel waiting time increased from 1.2 to 6.8 days. Insurance premiums for Red Sea transit up 400%. Alternative Cape of Good Hope routing adds 10-14 days.", "supports": [0], "contradicts": [1, 2, 3, 4], "base_confidence": 0.80},
-            {"text": "Bloomberg terminal data: Sector rotation analysis shows Tech (-8.2%), Real Estate (-12.4%), Industrials (+3.1%), Utilities (+5.7%). VIX at 28.4 (elevated). Put/call ratio on SPY at 1.34.", "supports": [1, 2, 3], "contradicts": [], "base_confidence": 0.50},
+            {"text": "Bloomberg terminal data: Sector rotation analysis shows Tech (-8.2%), Real Estate (-12.4%), Industrials (+3.1%), Utilities (+5.7%). VIX at 28.4 (elevated). Put/call ratio on SPY at 1.34.", "supports": [1, 2, 3], "contradicts": [0], "base_confidence": 0.50},
             {"text": "Federal Reserve Beige Book: 8 of 12 districts report slight to modest growth deceleration. Labor market cooling: JOLTS openings down to 8.1M from 10.7M peak. Core PCE sticky at 3.2%.", "supports": [4], "contradicts": [3], "base_confidence": 0.60},
             {"text": "Reuters survey of 40 industry analysts: 62% cite regulatory uncertainty as primary headwind. STOXX Europe 600 Tech sub-index underperforming broader index by 340bps since Act announcement.", "supports": [2], "contradicts": [0], "base_confidence": 0.65},
             {"text": "Shipping satellite AIS data (MarineTraffic): 47 container vessels currently holding at Bab el-Mandab strait anchorage. Average wait time 8.4 days (normal: <1 day). CMA CGM and Hapag-Lloyd have rerouted 100% of Asia-Europe services via Cape of Good Hope since Jan 15.", "supports": [0], "contradicts": [1, 3, 4], "base_confidence": 0.83},
@@ -116,7 +116,7 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
             {"text": "SIEM alert: Anomalous data exfiltration -- 2.4TB transferred to external IP 185.220.101.x (Tor exit node) between 02:00-04:00 UTC via DNS tunneling (TXT record queries at 847/min to randomized subdomains of legit-update[.]com).", "supports": [0, 1], "contradicts": [4], "base_confidence": 0.72},
             {"text": "CrowdStrike Falcon EDR: Process injection detected -- explorer.exe spawned rundll32.exe loading unsigned DLL from %APPDATA%. Behavioral signature matches MITRE ATT&CK T1055.001 (Process Hollowing). Cobalt Strike beacon config extracted: watermark 0x5109bf4d.", "supports": [1], "contradicts": [0, 4], "base_confidence": 0.80},
             {"text": "Vulnerability scan results: 14 internet-facing hosts running XZ Utils 5.6.0/5.6.1 (affected versions). OpenSSH with systemd integration confirmed on 9 hosts. Liblzma backdoor allows pre-auth RCE via crafted SSH certificates. CVSS 10.0.", "supports": [2], "contradicts": [0, 3], "base_confidence": 0.85},
-            {"text": "Email gateway logs: 23 employees in Finance/Engineering received emails from spoofed DocuSign sender (envelope-from: noreply@docusign-verify[.]net). 7 clicked through. Credential harvesting page hosted on Cloudflare Workers. OAuth tokens for 4 Microsoft 365 accounts compromised.", "supports": [3], "contradicts": [], "base_confidence": 0.70},
+            {"text": "Email gateway logs: 23 employees in Finance/Engineering received emails from spoofed DocuSign sender (envelope-from: noreply@docusign-verify[.]net). 7 clicked through. Credential harvesting page hosted on Cloudflare Workers. OAuth tokens for 4 Microsoft 365 accounts compromised.", "supports": [3], "contradicts": [0, 2, 4], "base_confidence": 0.70},
             {"text": "AWS CloudTrail: S3 bucket prod-customer-data-2024 had BlockPublicAccess disabled on 2024-01-15 by IAM role deploy-automation. ListBucket and GetObject calls from 94 unique IPs across 12 countries in subsequent 72 hours. No bucket policy restricting access.", "supports": [4], "contradicts": [1, 2], "base_confidence": 0.88},
             {"text": "HR records cross-reference: Employee J.M. (Senior DevOps, termination date: 2024-02-01) retained VPN access for 18 days post-termination. Badge access logs show after-hours entry to server room on 3 dates. GitHub audit log: 4 repos cloned to personal device on final day.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.75},
             {"text": "Threat intel correlation (VirusTotal + MISP): Malware sample SHA256:a3b5... matches YARA rule APT29_WellMess_Loader. Infrastructure overlap with 2020 SolarWinds campaign (shared SSL certificate CN). TTPs consistent with SVR targeting pattern.", "supports": [1], "contradicts": [0, 3, 4], "base_confidence": 0.78},
@@ -124,7 +124,7 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
             {"text": "DLP alert review: 340 files matching PII regex (SSN, credit card) were accessed by service account svc-reporting which normally queries only aggregated tables. Access originated from J.M. last-known workstation IP. No MFA prompt triggered (service accounts exempt).", "supports": [0], "contradicts": [1, 2], "base_confidence": 0.68},
             {"text": "Active Directory audit log: Service account svc-backup had its password reset by J.M.'s admin credentials 72 hours before termination. Same service account was used for lateral movement to 3 database servers containing customer PII. No helpdesk ticket corresponds to this password reset.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.82},
             {"text": "Mandiant threat intelligence report: APT29 shifted to cloud-focused operations in 2024. New tactic: abuse of trusted cloud services (Azure, AWS) for C2. No direct evidence of on-premise intrusion in this campaign. Targeting profile: government contractors and think tanks.", "supports": [1], "contradicts": [0, 4], "base_confidence": 0.70},
-            {"text": "Patch management audit (Qualys): 67% of external-facing systems had critical patches applied within SLA. XZ Utils specifically was patched on 14 of 14 affected hosts within 48 hours of CVE publication. However, backdoor may have been active for up to 3 weeks before CVE disclosure.", "supports": [2], "contradicts": [], "base_confidence": 0.65},
+            {"text": "Patch management audit (Qualys): 67% of external-facing systems had critical patches applied within SLA. XZ Utils specifically was patched on 14 of 14 affected hosts within 48 hours of CVE publication. However, backdoor may have been active for up to 3 weeks before CVE disclosure.", "supports": [2], "contradicts": [0, 3], "base_confidence": 0.65},
             {"text": "Microsoft 365 audit log: Compromised OAuth tokens were used to create 3 new mail flow rules forwarding all C-suite email to external address. Rules created at 14:22 UTC using legitimate user session from residential ISP IP. Geo-impossible travel detected: London (14:00) -> Lagos (14:22).", "supports": [3], "contradicts": [0, 2], "base_confidence": 0.76},
             {"text": "AWS Config timeline: IAM policy arn:aws:iam::123456789:policy/S3FullAccess was attached to 8 additional roles between Jan 10-15. Change was made via Terraform by the deploy-automation role. No code review or approval in GitHub for corresponding IaC changes.", "supports": [4], "contradicts": [1, 2], "base_confidence": 0.79},
             {"text": "Network forensics: TLS certificate analysis on C2 channel shows Lets Encrypt cert issued 48hrs before breach. JA3 fingerprint matches known Cobalt Strike 4.9 profile. Beacon interval: 60s with 15% jitter. Metadata exfil via DNS over HTTPS to Cloudflare resolver.", "supports": [1, 2, 3], "contradicts": [4], "base_confidence": 0.65},
@@ -143,18 +143,18 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
         ],
         evidence_templates=[
             {"text": "NOAA Oceanic Nino Index (ONI): +2.1C for DJF 2023-24, qualifying as very strong El Nino. Subsurface Kelvin wave analysis shows warm pool extending to 150W. Trade wind anomaly: -4.2 m/s. Historical analog years (1997-98, 2015-16) show similar teleconnection patterns.", "supports": [0], "contradicts": [3], "base_confidence": 0.78},
-            {"text": "Mauna Loa Observatory CO2: 425.4 ppm (May 2024), annual increase +3.4 ppm (highest recorded rate). Methane at 1,923 ppb (+14 ppb YoY). Global mean surface temperature anomaly: +1.48C above 1850-1900 baseline (ERA5 reanalysis).", "supports": [1], "contradicts": [], "base_confidence": 0.85},
+            {"text": "Mauna Loa Observatory CO2: 425.4 ppm (May 2024), annual increase +3.4 ppm (highest recorded rate). Methane at 1,923 ppb (+14 ppb YoY). Global mean surface temperature anomaly: +1.48C above 1850-1900 baseline (ERA5 reanalysis).", "supports": [1], "contradicts": [3, 4], "base_confidence": 0.85},
             {"text": "NASA SAGE III/ISS stratospheric aerosol data: Aerosol optical depth (AOD) at 0.010 above baseline at 525nm in Southern Hemisphere. Hunga Tonga-Hunga Haapai injected estimated 146 Tg of water vapor into the stratosphere (January 2022). Residence time models suggest perturbation persists through 2025.", "supports": [2], "contradicts": [0], "base_confidence": 0.72},
             {"text": "Urban weather station network (EPA AirNow + local ASOS): City center station reads 4.8C above rural reference station 35km NW. Landsat 9 thermal band shows surface temperature differential of 6.2C between CBD impervious surfaces and surrounding agricultural land. Effect is nocturnal-dominant.", "supports": [3], "contradicts": [0, 1, 2], "base_confidence": 0.65},
-            {"text": "Global Forest Watch / PRODES data: Amazon deforestation rate 11,568 km2 in 2023 (up 22% from 2019 baseline). Southeast Asia palm oil expansion: 2.4M hectares converted 2020-2024. Albedo change from forest to pasture estimated at +0.03 (shortwave), reducing evapotranspiration by 40%.", "supports": [4], "contradicts": [], "base_confidence": 0.68},
+            {"text": "Global Forest Watch / PRODES data: Amazon deforestation rate 11,568 km2 in 2023 (up 22% from 2019 baseline). Southeast Asia palm oil expansion: 2.4M hectares converted 2020-2024. Albedo change from forest to pasture estimated at +0.03 (shortwave), reducing evapotranspiration by 40%.", "supports": [4], "contradicts": [0, 3], "base_confidence": 0.68},
             {"text": "ECMWF ERA5 reanalysis: SST anomaly pattern shows canonical El Nino spatial signature in Nino 3.4 region. 200hPa velocity potential anomalies consistent with enhanced Walker circulation weakening. MJO phase analysis shows suppressed convection over Maritime Continent.", "supports": [0], "contradicts": [1, 3, 4], "base_confidence": 0.75},
             {"text": "IPCC AR6 attribution framework applied: Probability of this event magnitude under pre-industrial conditions <0.3%. Under current forcing: approximately 4% annually. Fraction of Attributable Risk (FAR) = 0.93 for anthropogenic warming. Multi-model ensemble (CMIP6) agreement: 38 of 42 models reproduce the event under SSP2-4.5.", "supports": [1], "contradicts": [0], "base_confidence": 0.82},
             {"text": "Radiosonde network (IGRA): Temperature profile shows stratospheric cooling (-0.8C at 50hPa) concurrent with tropospheric warming (+1.2C at 500hPa). This vertical signature is fingerprint of greenhouse gas forcing, not solar or volcanic (which warm the stratosphere).", "supports": [1], "contradicts": [2, 3], "base_confidence": 0.80},
             {"text": "CALIPSO lidar backscatter profiles: Enhanced aerosol layer detected at 28-32km altitude, consistent with Hunga Tonga volcanic plume trajectory modeling. Particle size distribution peaks at 0.5um. No comparable stratospheric perturbation since Pinatubo (1991).", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.77},
             {"text": "Ocean buoy network (TAO/TRITON array): Subsurface temperature at 150m depth along equatorial Pacific shows +4.2C anomaly. Warm water volume (>20C isotherm) expanded to 135% of climatological mean. Thermocline depth anomaly: +28m. Pattern is textbook El Nino Modoki (central Pacific type).", "supports": [0], "contradicts": [3, 4], "base_confidence": 0.80},
-            {"text": "Ice core proxy data (Vostok, EPICA): Current CO2 level (425 ppm) exceeds any value in the 800,000-year record. Rate of increase (3.4 ppm/yr) is 10x faster than the fastest natural increase during deglaciation events. Methane similarly unprecedented at 1,923 ppb.", "supports": [1], "contradicts": [], "base_confidence": 0.88},
+            {"text": "Ice core proxy data (Vostok, EPICA): Current CO2 level (425 ppm) exceeds any value in the 800,000-year record. Rate of increase (3.4 ppm/yr) is 10x faster than the fastest natural increase during deglaciation events. Methane similarly unprecedented at 1,923 ppb.", "supports": [1], "contradicts": [0, 3], "base_confidence": 0.88},
             {"text": "SO2 monitoring (Aura/OMI satellite): No significant SO2 plumes detected in the past 6 months. Stratospheric SO2 column density at background levels (0.1 DU). No volcanic eruptions with VEI >= 4 since Hunga Tonga. Rules out fresh volcanic aerosol injection.", "supports": [0, 1, 4], "contradicts": [2], "base_confidence": 0.73},
-            {"text": "Microclimate sensor network (urban/rural paired stations): Temperature differential exhibits strong diurnal cycle -- UHI effect peaks at 01:00-04:00 local (delta: +5.8C) and minimizes at 14:00 (delta: +1.2C). Weekend vs weekday difference: 0.4C (anthropogenic heat flux signature).", "supports": [3], "contradicts": [], "base_confidence": 0.62},
+            {"text": "Microclimate sensor network (urban/rural paired stations): Temperature differential exhibits strong diurnal cycle -- UHI effect peaks at 01:00-04:00 local (delta: +5.8C) and minimizes at 14:00 (delta: +1.2C). Weekend vs weekday difference: 0.4C (anthropogenic heat flux signature).", "supports": [3], "contradicts": [0, 2], "base_confidence": 0.62},
             {"text": "GRACE-FO satellite gravimetry: Terrestrial water storage in Amazon basin decreased by 34 km3/year over 2020-2024 period. Evapotranspiration reduction detected via MODIS ET product. Regional precipitation recycling ratio dropped from 0.35 to 0.28 (moisture recycling breakdown).", "supports": [4], "contradicts": [3], "base_confidence": 0.74},
             {"text": "Flux tower network (FLUXNET): Latent heat flux at deforested Amazon sites reduced by 42% compared to paired intact forest references. Sensible heat flux increased proportionally. Regional moisture recycling model shows 18% reduction in recycled precipitation for downwind regions.", "supports": [4], "contradicts": [3], "base_confidence": 0.70},
         ],
@@ -175,7 +175,7 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
             {"text": "Scanning electron microscopy (SEM-EDS): Tool marks on base show parallel striations at 0.8mm spacing with irregular depth -- consistent with hand-worked bronze chisel. No evidence of rotary tool marks (which would indicate post-1800 manufacture). Surface crystallization: cuprite penetration to 180um depth.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.76},
             {"text": "X-ray fluorescence (XRF) compositional analysis: Cu 88.2%, Sn 9.8%, Pb 1.4%, As 0.3%, Fe 0.2%, trace Ag/Sb. The arsenic-tin bronze composition is consistent with Eastern Mediterranean production c. 400-100 BCE. Lead isotope ratios (206/204: 18.72, 207/204: 15.66) match Laurion mines (Attica).", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.78},
             {"text": "Thermoluminescence (TL) dating of clay core fragments: Last firing event dated to 1,890 +/- 120 years before present. This places manufacture in the 1st-2nd century CE range -- approximately 400 years later than the claimed Hellenistic date.", "supports": [2], "contradicts": [0, 1, 3], "base_confidence": 0.84},
-            {"text": "Provenance research: Object appears in the 1897 Baron Rothschild collection catalog (item #447, described as Hellenistic bronze, provenance unknown). No documentation between supposed antiquity and 1897. Geneva Freeport storage records: 1962-2019. No export license from country of origin.", "supports": [0, 2, 3], "contradicts": [], "base_confidence": 0.55},
+            {"text": "Provenance research: Object appears in the 1897 Baron Rothschild collection catalog (item #447, described as Hellenistic bronze, provenance unknown). No documentation between supposed antiquity and 1897. Geneva Freeport storage records: 1962-2019. No export license from country of origin.", "supports": [0, 2, 3], "contradicts": [4], "base_confidence": 0.55},
             {"text": "UV fluorescence examination: Modern synthetic adhesive (cyanoacrylate signature) detected at 3 join points. Surrounding patina is disrupted at joins -- sharp boundary between weathered and unweathered surfaces. Two fragments show different patina coloration (olive-green vs. blue-green).", "supports": [4], "contradicts": [0, 1, 3], "base_confidence": 0.80},
             {"text": "Micro-CT scan (160kV, 12um resolution): Internal structure shows 2 distinct casting events -- left arm and torso have different internal porosity patterns and wall thicknesses (2.1mm vs 3.4mm). Core material: 2 different clay types visible in density mapping.", "supports": [4], "contradicts": [0, 1, 3], "base_confidence": 0.82},
             {"text": "Iconographic analysis (Dr. M. Korres, Athens): Hairstyle matches melon coiffure type common 340-300 BCE. Drapery folds use motion lines technique from Lysippan school. However, proportional system (7.5 head-heights) is characteristic of Roman copies of Greek originals.", "supports": [0, 2], "contradicts": [1, 3], "base_confidence": 0.60},
@@ -210,6 +210,11 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
             {"text": "Industry benchmarking data (IBISWorld): 73% of comparable contracts executed in the same period were fulfilled on time. Supply chain disruption affected only 12% of the specific material category. Market conditions were within normal variance.", "supports": [0, 1], "contradicts": [2], "base_confidence": 0.72},
             {"text": "Contract execution records: Both parties used the same law firm (conflict-of-interest waiver signed). Junior associate drafted final version. Senior partner review was skipped due to year-end rush. No independent legal review by either party.", "supports": [3], "contradicts": [0, 4], "base_confidence": 0.65},
             {"text": "Bank records (Exhibit F-7): Respondent transferred $2.4M to an offshore subsidiary 48 hours before sending breach notification. Transfer memo: 'Asset protection -- anticipated litigation.' Funds were earmarked for the contract's performance budget.", "supports": [0], "contradicts": [1, 2, 3], "base_confidence": 0.85},
+            {"text": "Digital forensics report (Stroz Friedberg): Metadata analysis of respondent's internal documents shows 14 files related to alternative supplier negotiations were created 6 weeks before the claimed force majeure event. File timestamps predate the supply disruption by 3 weeks. Four files were deleted using secure-erase software 48 hours before litigation hold.", "supports": [0], "contradicts": [2, 3, 4], "base_confidence": 0.83},
+            {"text": "Regulatory compliance history (state AG database): Respondent has 3 prior consent decrees for deceptive trade practices in the past 7 years. Two involved misrepresentation of product specifications. Pattern of behavior documented across multiple jurisdictions. Current compliance monitor's report flags ongoing concerns.", "supports": [0, 1], "contradicts": [3], "base_confidence": 0.68},
+            {"text": "Expert economic damages report (Dr. K. Mehta, Forensic Economics): Quantified plaintiff's losses at $8.7M including lost profits ($5.2M), cover costs ($2.1M), and consequential damages ($1.4M). Analysis shows plaintiff took reasonable mitigation steps within 5 business days of breach notification. No contributory negligence found.", "supports": [0, 4], "contradicts": [3], "base_confidence": 0.72},
+            {"text": "Witness deposition compilation (3 project managers): Timeline analysis reveals contradictory statements -- PM1 states supply issues began 'mid-March,' PM2 states 'late April,' PM3 states 'we never had supply issues, it was a pricing decision.' Internal Slack messages corroborate PM3's account with respondent's CFO stating 'we need to exit this contract.'", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.79},
+            {"text": "Insurance policy analysis (Hartford Commercial GL): Policy exclusion 4.12 explicitly carves out 'losses arising from voluntary non-performance of contractual obligations.' Subrogation clause in Section 9 would transfer recovery rights to insurer if force majeure were proven. Insurer's independent investigation concluded force majeure criteria were not met.", "supports": [1], "contradicts": [2, 4], "base_confidence": 0.67},
         ],
     ),
     # -- 7. Epidemiological Outbreak Investigation --------------------------
@@ -234,6 +239,11 @@ SCENARIO_TEMPLATES: List[ScenarioTemplate] = [
             {"text": "Clinical presentation summary (n=189 confirmed cases): Fever >38.5C (89%), cough (76%), dyspnea (34%), bilateral infiltrates on CXR (28%). Hospitalization rate 18%. ICU admission 4.2%. CFR 1.1% (2 deaths, both >70yr with comorbidities). Median age: 41yr.", "supports": [2], "contradicts": [0, 4], "base_confidence": 0.70},
             {"text": "Contact tracing data (local health dept): Secondary cases cluster tightly around index cases -- no sustained community transmission. All secondary cases had prolonged face-to-face contact (>15 min, <2m) or shared contaminated surfaces. R0 estimated at 1.4 (95% CI: 0.9-2.1).", "supports": [4], "contradicts": [2, 3], "base_confidence": 0.68},
             {"text": "Travel and exposure history (line list analysis): 78% of cases report no travel. No cases among tourists or recent arrivals. Onset dates span 18 days. No common outdoor exposure. 62% of cases are food service workers or their household contacts.", "supports": [0, 4], "contradicts": [2, 3], "base_confidence": 0.65},
+            {"text": "Hospital antibiogram data (regional lab network): Stool cultures from 67 cases show Salmonella enteritidis with identical resistance pattern (AmpR, TetR, SulR). MLST type ST11 confirmed across all isolates. Antimicrobial susceptibility testing shows ciprofloxacin MIC 0.03 ug/mL (susceptible). No Cryptosporidium, Norovirus, or influenza detected in parallel testing of same specimens.", "supports": [0], "contradicts": [1, 2, 4], "base_confidence": 0.86},
+            {"text": "Wastewater surveillance (SARS-CoV-2 adapted protocol, Biobot Analytics): Municipal wastewater from 4 treatment plants sampled daily. No influenza A RNA detected above baseline (Ct >35). No Cryptosporidium oocysts in settled solids. Elevated Salmonella gene copies (invA target) detected in Plant C catchment -- 3.2 log10 copies/L above seasonal baseline.", "supports": [0], "contradicts": [1, 2, 3], "base_confidence": 0.74},
+            {"text": "Animal reservoir investigation (USDA APHIS + state vet lab): Poultry farms within 50km radius tested -- Farm 447-GA shows 34% flock positivity for S. enteritidis (cloacal swabs, n=200). Environmental sampling of processing plant: 8 of 12 surface swabs positive. No H5N1 detected in any avian samples (0/450 tested). No Aedes breeding sites on agricultural properties.", "supports": [0], "contradicts": [2, 3], "base_confidence": 0.81},
+            {"text": "Syndromic surveillance (ESSENCE system + social media NLP): Google Trends shows 340% spike in 'food poisoning' searches in affected metro area starting day 2. Twitter/X NLP analysis: 89 geolocated posts mentioning GI symptoms cluster around 3 restaurant chain X locations. No uptick in 'flu symptoms' or 'mosquito bite' searches. Emergency department chief complaint data shows GI category up 280% vs respiratory up only 8%.", "supports": [0, 4], "contradicts": [2, 3], "base_confidence": 0.69},
+            {"text": "Food supply chain traceback (FDA CORE Network): Cold chain temperature logs from distributor show 2 delivery trucks exceeded 7C threshold for 4+ hours on dates correlating with outbreak onset. Distribution network analysis confirms all 3 implicated restaurant locations received product from same lot (Lot 2024-0447). Recall initiated for 12,000 lbs of poultry product.", "supports": [0], "contradicts": [1, 2, 3, 4], "base_confidence": 0.84},
         ],
     ),
 ]
@@ -279,6 +289,9 @@ class EpisodeData:
     raw_reward: float = 0.0
     submitted: bool = False
     submitted_hypothesis: Optional[int] = None
+    # Belief tracking for information-gain rewards (Change 2)
+    belief: List[float] = field(default_factory=list)  # posterior over hypotheses
+    total_information_gain: float = 0.0  # cumulative entropy reduction
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -294,6 +307,50 @@ ACTION_COSTS: Dict[str, int] = {
 }
 
 VALID_ACTION_TYPES = set(ACTION_COSTS.keys())
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Belief Tracking Utilities (Change 2: Information-Gain Rewards)
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _entropy(belief: List[float]) -> float:
+    """Compute Shannon entropy of a belief distribution (in nats)."""
+    return -sum(p * math.log(p + 1e-12) for p in belief if p > 0)
+
+
+def _update_belief(
+    belief: List[float],
+    supports: List[int],
+    contradicts: List[int],
+    confidence: float,
+    active_ids: List[int],
+) -> List[float]:
+    """Bayesian belief update given evidence support/contradiction signals.
+
+    Supported hypotheses get likelihood boost proportional to confidence.
+    Contradicted hypotheses get likelihood penalty.
+    Inactive (discarded) hypotheses stay at 0.
+    Returns normalized posterior.
+    """
+    new_belief = list(belief)
+    for i in range(len(new_belief)):
+        if i not in active_ids:
+            new_belief[i] = 0.0
+            continue
+        if i in supports:
+            new_belief[i] *= (1.0 + confidence)
+        if i in contradicts:
+            new_belief[i] *= max(0.05, 1.0 - confidence * 0.7)
+    # Normalize
+    total = sum(new_belief)
+    if total > 0:
+        new_belief = [p / total for p in new_belief]
+    else:
+        # Fallback: uniform over active
+        n_active = len(active_ids)
+        new_belief = [1.0 / n_active if i in active_ids else 0.0
+                      for i in range(len(belief))]
+    return new_belief
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -516,8 +573,19 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
         )
         ep.revealed_evidence[eid] = item
 
-        # Step reward proportional to action cost
-        step_reward = -float(ACTION_COSTS['read_evidence'])
+        # ── Change 2: Info-gain step reward ──
+        entropy_before = _entropy(ep.belief)
+        ep.belief = _update_belief(
+            ep.belief, apparent_support, apparent_contradiction,
+            hidden.base_confidence, ep.active_hypothesis_ids,
+        )
+        entropy_after = _entropy(ep.belief)
+        info_gain = max(0.0, entropy_before - entropy_after)
+        ep.total_information_gain += info_gain
+
+        # Reward = info gain - cost penalty (scaled)
+        cost_penalty = float(ACTION_COSTS['read_evidence']) * 0.3
+        step_reward = info_gain * 3.0 - cost_penalty
         ep.raw_reward += step_reward
 
         ep.action_history.append({
@@ -525,6 +593,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             "action": "read_evidence",
             "evidence_id": eid,
             "cost": ACTION_COSTS["read_evidence"],
+            "info_gain": round(info_gain, 4),
         })
 
         # Check if budget exhausted
@@ -578,8 +647,19 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
         )
         ep.revealed_evidence[eid] = verified_item
 
-        # Step reward proportional to action cost
-        step_reward = -float(ACTION_COSTS['run_experiment'])
+        # ── Change 2: Info-gain step reward — verification reveals truth ──
+        entropy_before = _entropy(ep.belief)
+        ep.belief = _update_belief(
+            ep.belief, list(hidden.true_support), list(hidden.true_contradiction),
+            1.0,  # Verified = full confidence
+            ep.active_hypothesis_ids,
+        )
+        entropy_after = _entropy(ep.belief)
+        info_gain = max(0.0, entropy_before - entropy_after)
+        ep.total_information_gain += info_gain
+
+        cost_penalty = float(ACTION_COSTS['run_experiment']) * 0.3
+        step_reward = info_gain * 3.0 - cost_penalty
         ep.raw_reward += step_reward
 
         ep.action_history.append({
@@ -587,6 +667,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             "action": "run_experiment",
             "evidence_id": eid,
             "cost": ACTION_COSTS["run_experiment"],
+            "info_gain": round(info_gain, 4),
         })
 
         if ep.budget_remaining <= 0:
@@ -613,17 +694,29 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
         ep.budget_remaining -= ACTION_COSTS["consult_expert"]
         ep.experts_consulted += 1
 
-        # Generate probabilistic hint (deterministic from seed)
+        # ── Change 5: Evidence-based expert — compute probability from
+        # actual evidence structure, not random ranges ──
         rng = random.Random(ep.seed * 2000 + hid)
 
-        if hid == ep.true_hypothesis_id:
-            # True hypothesis: expert gives high probability (0.6–0.9)
-            prob = rng.uniform(0.6, 0.9)
-            hint_text = _generate_expert_hint_text(ep.theme, hid, prob, is_true=True, rng=rng)
-        else:
-            # False hypothesis: expert gives low probability (0.1–0.45)
-            prob = rng.uniform(0.1, 0.45)
-            hint_text = _generate_expert_hint_text(ep.theme, hid, prob, is_true=False, rng=rng)
+        # Expert evaluates ALL evidence for this hypothesis
+        net_support = 0.0
+        total_weight = 0.0
+        for ev in ep.evidence:
+            weight = ev.reliability * ev.base_confidence
+            if hid in ev.true_support:
+                net_support += weight
+            if hid in ev.true_contradiction:
+                net_support -= weight * 0.7
+            total_weight += weight
+
+        # Normalize to [0, 1]
+        raw_prob = (net_support / total_weight + 1.0) / 2.0 if total_weight > 0 else 0.5
+        # Expert noise — imperfect but informative (±0.08)
+        noise = rng.uniform(-0.08, 0.08)
+        prob = max(0.05, min(0.95, raw_prob + noise))
+
+        is_true = (hid == ep.true_hypothesis_id)
+        hint_text = _generate_expert_hint_text(ep.theme, hid, prob, is_true=is_true, rng=rng)
 
         hint = ExpertHint(
             hypothesis_id=hid,
@@ -632,7 +725,22 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
         )
         ep.expert_hints.append(hint)
 
-        step_reward = -float(ACTION_COSTS['consult_expert'])
+        # ── Change 2: Info-gain from expert hint ──
+        entropy_before = _entropy(ep.belief)
+        # Expert hint acts as evidence: high prob → support, low prob → contradict
+        expert_supports = [hid] if prob > 0.5 else []
+        expert_contradicts = [hid] if prob <= 0.5 else []
+        ep.belief = _update_belief(
+            ep.belief, expert_supports, expert_contradicts,
+            abs(prob - 0.5) * 2.0,  # Strength proportional to distance from 0.5
+            ep.active_hypothesis_ids,
+        )
+        entropy_after = _entropy(ep.belief)
+        info_gain = max(0.0, entropy_before - entropy_after)
+        ep.total_information_gain += info_gain
+
+        cost_penalty = float(ACTION_COSTS['consult_expert']) * 0.3
+        step_reward = info_gain * 3.0 - cost_penalty
         ep.raw_reward += step_reward
 
         ep.action_history.append({
@@ -640,6 +748,8 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             "action": "consult_expert",
             "hypothesis_id": hid,
             "cost": ACTION_COSTS["consult_expert"],
+            "info_gain": round(info_gain, 4),
+            "expert_prob": round(prob, 2),
         })
 
         if ep.budget_remaining <= 0:
@@ -671,6 +781,16 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
 
         ep.active_hypothesis_ids.remove(hid)
 
+        # ── Change 2: Belief-based discard reward ──
+        entropy_before = _entropy(ep.belief)
+        # Zero out discarded hypothesis and renormalize
+        ep.belief = _update_belief(
+            ep.belief, [], [], 0.0, ep.active_hypothesis_ids,
+        )
+        entropy_after = _entropy(ep.belief)
+        info_gain = max(0.0, entropy_before - entropy_after)
+        ep.total_information_gain += info_gain
+
         if hid == ep.true_hypothesis_id:
             # Agent discarded the truth — severe penalty
             ep.discarded_true = True
@@ -678,9 +798,9 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             step_reward = -5.0
             msg = f"Discarded hypothesis H{hid}: \"{ep.hypotheses[hid]}\". Noted."
         else:
-            # Correct discard
+            # Correct discard — reward proportional to info gain
             ep.correct_discards += 1
-            step_reward = 2.0
+            step_reward = info_gain * 3.0 + 1.0
             msg = f"Discarded hypothesis H{hid}: \"{ep.hypotheses[hid]}\". " \
                   f"Search space narrowed to {len(ep.active_hypothesis_ids)} hypotheses."
 
@@ -691,6 +811,7 @@ class RCTDEnvironment(Environment[RCTDAction, RCTDObservation, RCTDState]):
             "action": "discard_hypothesis",
             "hypothesis_id": hid,
             "cost": 0,
+            "info_gain": round(info_gain, 4),
         })
 
         return self._make_obs(
@@ -1095,13 +1216,27 @@ def _generate_episode(
     # Remap indices: original template IDs → new 0..N-1 IDs
     index_remap = {old: new for new, old in enumerate(hypothesis_indices)}
 
-    # Select ground truth
-    true_id = rng.randrange(num_hypotheses)
-
-    # Select and adapt evidence
+    # Select evidence subset (must happen before ground truth selection)
     available_evidence = list(range(len(template.evidence_templates)))
     rng.shuffle(available_evidence)
     selected_evidence_indices = available_evidence[:num_evidence]
+
+    # ── Change 1: Semantic ground truth — pick the hypothesis with
+    # the strongest net support from the selected evidence templates.
+    # This ensures text content semantically aligns with the correct answer.
+    support_scores = [0.0] * num_hypotheses
+    for orig_eid in selected_evidence_indices:
+        tmpl = template.evidence_templates[orig_eid]
+        for s in tmpl["supports"]:
+            if s in index_remap:
+                support_scores[index_remap[s]] += tmpl["base_confidence"]
+        for c in tmpl["contradicts"]:
+            if c in index_remap:
+                support_scores[index_remap[c]] -= tmpl["base_confidence"] * 0.5
+    # Pick the top-supported, with randomness to break ties
+    top_score = max(support_scores)
+    candidates = [i for i, s in enumerate(support_scores) if s >= top_score - 0.1]
+    true_id = rng.choice(candidates)
 
     evidence_items: List[HiddenEvidence] = []
     strong_support_count = 0
@@ -1165,6 +1300,9 @@ def _generate_episode(
                 candidate.true_support.append(h_id)
                 supporting += 1
 
+    # Initialize uniform belief prior (Change 2)
+    uniform_belief = [1.0 / num_hypotheses] * num_hypotheses
+
     return EpisodeData(
         seed=seed,
         theme=template.theme,
@@ -1175,6 +1313,7 @@ def _generate_episode(
         active_hypothesis_ids=list(range(num_hypotheses)),
         budget_remaining=budget,
         total_budget=budget,
+        belief=uniform_belief,
     )
 
 
@@ -1190,7 +1329,8 @@ def _compute_metrics(ep: EpisodeData) -> Dict[str, Any]:
     # Success
     success = (ep.submitted_hypothesis == ep.true_hypothesis_id)
 
-    # Efficiency: budget remaining / total budget
+    # Efficiency: budget remaining / total budget (informational metric;
+    # grader uses info-gain/budget-spent separately for scoring)
     efficiency = ep.budget_remaining / ep.total_budget if ep.total_budget > 0 else 0
 
     # Evidence utilization
@@ -1216,6 +1356,12 @@ def _compute_metrics(ep: EpisodeData) -> Dict[str, Any]:
             else:
                 failure_mode = "reasoning_error"
 
+    # ── Change 7: Submission confidence (posterior belief on submitted hypothesis)
+    submission_confidence = 0.0
+    if ep.submitted_hypothesis is not None and ep.belief:
+        if ep.submitted_hypothesis < len(ep.belief):
+            submission_confidence = ep.belief[ep.submitted_hypothesis]
+
     return {
         "success": success,
         "efficiency_score": round(efficiency, 3),
@@ -1232,4 +1378,6 @@ def _compute_metrics(ep: EpisodeData) -> Dict[str, Any]:
         "scenario_theme": ep.theme,
         "true_hypothesis": ep.true_hypothesis_id,
         "submitted_hypothesis": ep.submitted_hypothesis,
+        "submission_confidence": round(submission_confidence, 4),
+        "total_information_gain": round(ep.total_information_gain, 4),
     }

@@ -4,8 +4,8 @@ RCTD Environment — Programmatic graders.
 Each grader runs one or more episodes for a specific task and produces
 a score between 0.0 and 1.0 based on four components:
 
-  Accuracy  (0.0 or 0.60) — Did the agent find the correct hypothesis?
-  Efficiency(0.00–0.20)   — Budget remaining / total budget
+  Accuracy  (0.0–0.60)    — 35% binary correctness + 25% confidence bonus
+  Efficiency(0.00–0.20)   — Information gained per unit of budget spent
   Utilization(0.00–0.10)  — Proportion of evidence meaningfully gathered
   Process   (0.00–0.10)   — Quality of elimination strategy
 
@@ -61,11 +61,18 @@ def grade_episode(
     metrics = obs.metrics or {}
 
     # ── Component scores ──────────────────────────────────────────────
-    # Accuracy (60% weight)
-    accuracy = 0.60 if metrics.get("success", False) else 0.0
+    # ── Change 3: Continuous Accuracy (35% binary + 25% confidence bonus)
+    success = metrics.get("success", False)
+    base_accuracy = 0.35 if success else 0.0
+    # Confidence bonus: how much evidence supports the submitted answer
+    submission_confidence = metrics.get("submission_confidence", 0.5)
+    confidence_bonus = submission_confidence * 0.25
+    accuracy = round(base_accuracy + confidence_bonus, 4)
 
-    # Efficiency (20% weight): budget remaining / total budget
-    efficiency_raw = metrics.get("efficiency_score", 0.0)
+    # ── Change 4: Efficiency = info gained / budget spent (20% weight)
+    total_info = metrics.get("total_information_gain", 0.0)
+    budget_spent = metrics.get("budget_used", 1)
+    efficiency_raw = min(1.0, total_info / max(1, budget_spent))
     efficiency = round(efficiency_raw * 0.20, 4)
 
     # Evidence utilization (10% weight)
@@ -95,31 +102,22 @@ def grade_episode(
     process_raw = max(0.0, min(1.0, process_raw))
     process = round(process_raw * 0.10, 4)
 
-    # Accuracy gate: when the agent gets the answer wrong, auxiliary
-    # components (efficiency, utilization, process) contribute at 25% rate.
-    # This prevents reward confounding where a random agent can score higher
-    # on hard tasks (tight budget → early submit → high efficiency) than on
-    # easy tasks. Wrong answers are capped at ~0.10 max from auxiliaries.
-    accuracy_gate = 1.0 if accuracy > 0 else 0.25
-
-    # Apply gate to auxiliary components
-    efficiency_gated = round(efficiency * accuracy_gate, 4)
-    utilization_gated = round(utilization * accuracy_gate, 4)
-    process_gated = round(process * accuracy_gate, 4)
+    # ── Change 6: No accuracy gate needed.
+    # With info-gain efficiency, submitting immediately gives zero info
+    # → zero efficiency naturally. The gate is no longer needed.
 
     # Total score — clamped to open interval (0, 1) per OpenEnv spec
-    score = round(accuracy + efficiency_gated + utilization_gated + process_gated, 4)
+    score = round(accuracy + efficiency + utilization + process, 4)
     score = max(0.001, min(0.999, score))
 
     return {
         "score": score,
         "components": {
             "accuracy": accuracy,
-            "efficiency": efficiency_gated,
-            "utilization": utilization_gated,
-            "process": process_gated,
+            "efficiency": efficiency,
+            "utilization": utilization,
+            "process": process,
         },
-        "accuracy_gate": accuracy_gate,
         "metrics": metrics,
         "task_id": task_id,
         "seed": seed,

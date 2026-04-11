@@ -110,7 +110,7 @@ Actions (respond with ONLY a JSON object):
 - {"type": "submit_answer", "hypothesis_id": N}    — cost 0, final answer
 
 Strategy: Read evidence → verify suspicious items → discard weak hypotheses → submit.
-Unused budget improves your score. Respond with ONLY a JSON object.""")
+Gathering useful information efficiently improves your score. Respond with ONLY a JSON object.""")
 
 
 def format_observation(obs: RCTDObservation) -> str:

@@ -54,7 +54,7 @@ ACTIONS (respond with JSON only):
 - {"type": "submit_answer", "hypothesis_id": N}    — cost 0, final answer
 
 STRATEGY: Read evidence → identify contradictions → verify suspicious items → \
-discard weak hypotheses → submit when confident. Unused budget improves your score.
+discard weak hypotheses → submit when confident. Gathering useful information efficiently improves your score.
 
 Respond with ONLY a JSON object. No explanation."""
 
@@ -132,10 +132,19 @@ def reward_correct(obs: RCTDObservation, env_state) -> float:
 
 
 def reward_efficiency(obs: RCTDObservation, env_state) -> float:
-    """Reward for budget efficiency — higher is better."""
+    """Reward for information-gain efficiency — info gained per budget spent."""
     if not obs.done or not obs.metrics:
         return 0.0
-    return obs.metrics.get("efficiency_score", 0.0)
+    total_info = obs.metrics.get("total_information_gain", 0.0)
+    budget_spent = obs.metrics.get("budget_used", 1)
+    return min(1.0, total_info / max(1, budget_spent))
+
+
+def reward_confidence(obs: RCTDObservation, env_state) -> float:
+    """Reward for evidence-backed submission confidence."""
+    if not obs.done or not obs.metrics:
+        return 0.0
+    return obs.metrics.get("submission_confidence", 0.0)
 
 
 def reward_evidence_quality(obs: RCTDObservation, env_state) -> float:
@@ -280,10 +289,10 @@ def rctd_rollout(
             "completion_ids": all_completion_ids,
             "logprobs": all_logprobs,
             "reward_correct": reward_correct(obs, env_state),
+            "reward_confidence": reward_confidence(obs, env_state),
             "reward_efficiency": reward_efficiency(obs, env_state),
             "reward_evidence_quality": reward_evidence_quality(obs, env_state),
             "reward_process": reward_process(obs, env_state),
-            "reward_format": reward_format(full_response),
         })
 
     return results
@@ -424,11 +433,14 @@ def main():
                 except Exception:
                     pass
 
-            # Weighted reward combining format + correctness signals
-            reward = format_score * 0.3  # 30% for valid JSON
+            # Weighted reward combining format + correctness + info-gain
+            reward = format_score * 0.2  # 20% for valid JSON
             if obs.done and obs.metrics:
-                reward += 0.5 if obs.metrics.get("success") else 0.0  # 50% for correct
-                reward += obs.metrics.get("efficiency_score", 0.0) * 0.2  # 20% for efficiency
+                reward += 0.35 if obs.metrics.get("success") else 0.0  # 35% for correct
+                reward += obs.metrics.get("submission_confidence", 0.0) * 0.25  # 25% confidence
+                total_info = obs.metrics.get("total_information_gain", 0.0)
+                budget_spent = obs.metrics.get("budget_used", 1)
+                reward += min(1.0, total_info / max(1, budget_spent)) * 0.2  # 20% efficiency
 
             rewards.append(reward)
 

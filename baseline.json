@@ -1,67 +1,62 @@
 {
   "baseline_scores": {
     "random": {
-      "overall_score": 0.3885,
+      "overall_score": 0.2223,
       "tasks": {
         "easy": {
-          "average_score": 0.5619,
-          "success_rate": 0.6667,
-          "min_score": 0.04,
-          "max_score": 0.8457,
+          "average_score": 0.4369,
+          "success_rate": 0.3333,
+          "min_score": 0.3716,
+          "max_score": 0.5057,
           "failure_modes": {
-            "discarded_correct_hypothesis": 1
+            "discarded_correct_hypothesis": 2
           }
         },
         "medium": {
-          "average_score": 0.5586,
-          "success_rate": 0.6667,
-          "min_score": 0.0558,
-          "max_score": 0.8499,
+          "average_score": 0.1051,
+          "success_rate": 0.0,
+          "min_score": 0.0625,
+          "max_score": 0.1365,
           "failure_modes": {
-            "budget_exhausted": 1,
-            "insufficient_evidence": 1
+            "insufficient_evidence": 3
           }
         },
         "hard": {
-          "average_score": 0.0451,
+          "average_score": 0.125,
           "success_rate": 0.0,
-          "min_score": 0.025,
-          "max_score": 0.0562,
+          "min_score": 0.1029,
+          "max_score": 0.1682,
           "failure_modes": {
-            "discarded_correct_hypothesis": 2,
-            "insufficient_evidence": 1
+            "insufficient_evidence": 2,
+            "discarded_correct_hypothesis": 1
           }
         }
       }
     },
     "heuristic": {
-      "overall_score": 0.4072,
+      "overall_score": 0.5449,
       "tasks": {
         "easy": {
-          "average_score": 0.437,
-          "success_rate": 0.6667,
-          "min_score": 0.001,
-          "max_score": 0.655,
-          "failure_modes": {
-            "budget_exhausted": 1
-          }
+          "average_score": 0.6445,
+          "success_rate": 1.0,
+          "min_score": 0.6387,
+          "max_score": 0.6489,
+          "failure_modes": {}
         },
         "medium": {
-          "average_score": 0.5003,
-          "success_rate": 0.6667,
-          "min_score": 0.0156,
-          "max_score": 0.7426,
-          "failure_modes": {
-            "budget_exhausted": 1
-          }
+          "average_score": 0.7256,
+          "success_rate": 1.0,
+          "min_score": 0.7111,
+          "max_score": 0.7343,
+          "failure_modes": {}
         },
         "hard": {
-          "average_score": 0.2842,
+          "average_score": 0.2645,
           "success_rate": 0.3333,
-          "min_score": 0.025,
-          "max_score": 0.8025,
+          "min_score": 0.1258,
+          "max_score": 0.5338,
           "failure_modes": {
-            "budget_exhausted": 2
+            "budget_exhausted": 3
           }
         }
       }
